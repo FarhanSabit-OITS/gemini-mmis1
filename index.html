@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MMIS - Multi-Vendor E-Commerce</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      // Global process polyfill - only define if not already present
+      window.process = window.process || { env: { API_KEY: "" } };
+
+      // Prevent Flash of Light Mode
+      (function() {
+        try {
+          const theme = localStorage.getItem('mmis_theme');
+          const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (theme === 'dark' || (!theme && supportDarkMode)) {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <link rel="stylesheet" href="./index.css">
+    <style type="text/tailwindcss">
+      @layer components {
+        .glass {
+          @apply bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-white/20 dark:border-slate-800/50;
+        }
+        body {
+          @apply transition-colors duration-500;
+        }
+      }
+    </style>
+    <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.sh/@google/genai@0.21.0",
+    "react": "https://esm.sh/react@18.3.1",
+    "react-dom": "https://esm.sh/react-dom@18.3.1",
+    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+    "lucide-react": "https://esm.sh/lucide-react@0.378.0?deps=react@18.3.1",
+    "recharts": "https://esm.sh/recharts@2.12.7?deps=react@18.3.1,react-dom@18.3.1",
+    "zod": "https://esm.sh/zod@3.23.8",
+    "clsx": "https://esm.sh/clsx@2.1.1",
+    "tailwind-merge": "https://esm.sh/tailwind-merge@2.3.0",
+    "react-dom/": "https://esm.sh/react-dom@^18.3.1/",
+    "react/": "https://esm.sh/react@^18.3.1/",
+    "vite": "https://esm.sh/vite@^5.2.11",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^4.2.1"
+  }
+}
+</script>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950">
+    <div id="root"></div>
+    <script type="module" src="./index.tsx"></script>
+</body>
+</html>
