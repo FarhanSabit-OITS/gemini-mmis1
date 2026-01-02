@@ -1,9 +1,8 @@
-
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { 
   Store, Bell, Search, User as UserIcon, LogOut, Sun, Moon, 
   Package, ArrowRight, X, ShoppingBag, ShoppingCart, 
-  Truck, LayoutGrid, FileText, CheckCircle2, AlertCircle
+  Truck, LayoutGrid, FileText, CheckCircle2, AlertCircle, Sparkles
 } from 'lucide-react';
 import { UserProfile } from '../../types';
 
@@ -19,7 +18,7 @@ interface HeaderProps {
   onNavigate?: (tab: string) => void;
 }
 
-// Levenshtein Distance for robust fuzzy matching - Moved outside for performance
+// Levenshtein Distance for robust fuzzy matching
 const levenshteinDistance = (a: string, b: string) => {
   const matrix = [];
   for (let i = 0; i <= b.length; i++) {
@@ -149,7 +148,7 @@ export const Header = ({
   };
 
   return (
-    <header className="h-24 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md sticky top-0 z-40 flex items-center justify-between px-8 border-b border-slate-100 dark:border-slate-800 transition-all duration-300">
+    <header className="h-24 glass sticky top-0 z-40 flex items-center justify-between px-8 border-b border-slate-100 dark:border-slate-800 transition-all duration-300">
       <div className="flex items-center gap-4 flex-1">
         <div 
           onClick={onLogoClick}
@@ -161,7 +160,7 @@ export const Header = ({
           </div>
           <div className="hidden sm:block">
             <h1 className="text-2xl font-black text-slate-800 dark:text-white tracking-tighter leading-none">MMIS</h1>
-            <p className="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-1">Regional HUB</p>
+            <p className="text-[8px] font-black text-slate-400 dark:text-slate-50 uppercase tracking-[0.3em] mt-1">Regional HUB</p>
           </div>
         </div>
       </div>
@@ -213,11 +212,19 @@ export const Header = ({
                                   className="w-full text-left px-4 py-3 rounded-2xl text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center justify-between group"
                                 >
                                   <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center group-hover:bg-white dark:group-hover:bg-slate-700 transition-colors shadow-sm">
-                                      <item.icon size={16} className="text-slate-400 dark:text-slate-500" />
+                                    <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center group-hover:bg-white dark:group-hover:bg-slate-700 transition-colors shadow-sm relative">
+                                      <item.icon size={16} className="text-slate-400 dark:text-slate-50" />
+                                      {item.score >= 100 && (
+                                        <div className="absolute -top-1 -right-1 bg-emerald-500 text-white rounded-full w-3 h-3 flex items-center justify-center">
+                                          <Sparkles size={8} />
+                                        </div>
+                                      )}
                                     </div>
                                     <div className="flex flex-col">
-                                      <span className="font-black truncate">{item.name}</span>
+                                      <span className="font-black truncate flex items-center gap-2">
+                                        {item.name}
+                                        {item.score >= 100 && <span className="text-[8px] bg-emerald-100 text-emerald-600 px-1.5 rounded uppercase tracking-widest">Exact</span>}
+                                      </span>
                                       <span className="text-[9px] opacity-40 font-mono tracking-tighter flex items-center gap-2">
                                         {item.id}
                                         {item.sub && <span className="bg-slate-100 dark:bg-slate-700 px-1 rounded text-[8px]">{item.sub}</span>}

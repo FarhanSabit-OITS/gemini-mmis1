@@ -1,8 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { UserProfile } from './types.ts';
 import { AuthPage } from './components/auth/AuthPage.tsx';
 import { OnboardingWizard } from './components/onboarding/OnboardingWizard.tsx';
 import { DashboardLayout } from './components/dashboard/DashboardLayout.tsx';
+import { ErrorBoundary } from './components/ui/ErrorBoundary.tsx';
 
 export const App = () => {
   const [view, setView] = useState<'AUTH' | 'ONBOARDING' | 'DASHBOARD'>('AUTH');
@@ -39,28 +41,30 @@ export const App = () => {
   };
 
   return (
-    <div className="antialiased text-slate-900 min-h-screen">
-      {view === 'AUTH' && (
-        <AuthPage 
-          onSuccess={handleLogin} 
-        />
-      )}
-      
-      {view === 'ONBOARDING' && user && (
-        <OnboardingWizard 
-          user={user} 
-          onComplete={handleCompleteOnboarding}
-          onCancel={handleLogout}
-        />
-      )}
-      
-      {view === 'DASHBOARD' && user && (
-        <DashboardLayout 
-          user={user} 
-          setUser={setUser} 
-          onLogout={handleLogout} 
-        />
-      )}
-    </div>
+    <ErrorBoundary>
+      <div className="antialiased text-slate-900 min-h-screen font-sans">
+        {view === 'AUTH' && (
+          <AuthPage 
+            onSuccess={handleLogin} 
+          />
+        )}
+        
+        {view === 'ONBOARDING' && user && (
+          <OnboardingWizard 
+            user={user} 
+            onComplete={handleCompleteOnboarding}
+            onCancel={handleLogout}
+          />
+        )}
+        
+        {view === 'DASHBOARD' && user && (
+          <DashboardLayout 
+            user={user} 
+            setUser={setUser} 
+            onLogout={handleLogout} 
+          />
+        )}
+      </div>
+    </ErrorBoundary>
   );
 };

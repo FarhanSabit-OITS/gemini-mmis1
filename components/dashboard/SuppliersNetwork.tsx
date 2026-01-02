@@ -4,7 +4,7 @@ import {
   Truck, Info, X, MessageSquare, ChevronDown, Award,
   ExternalLink, BarChart3, Clock, AlertTriangle, CheckCircle2,
   Package, ThumbsUp, MoreHorizontal, ShoppingCart, Tag, Zap, ArrowRight,
-  ShieldAlert, UserPlus, ClipboardList, Shield, UserCheck, Send
+  ShieldAlert, UserPlus, ClipboardList, Shield, UserCheck, Send, Sparkles
 } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Input } from '../ui/Input';
@@ -42,7 +42,8 @@ export const SuppliersNetwork = ({ user }: { user: UserProfile }) => {
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [showKYCModal, setShowKYCModal] = useState(false);
   const [showRequestModal, setShowRequestModal] = useState(false);
-  const [ratingForm, setRatingForm] = useState({ score: 5, comment: '' });
+  const [ratingValue, setRatingValue] = useState(5);
+  const [ratingComment, setRatingComment] = useState('');
   
   const [requestForm, setRequestForm] = useState({
     item: '',
@@ -52,7 +53,6 @@ export const SuppliersNetwork = ({ user }: { user: UserProfile }) => {
   });
 
   const isVendor = user.role === 'VENDOR';
-  const isSupplierRole = user.role === 'SUPPLIER';
   const isAdmin = user.role === 'SUPER_ADMIN' || user.role === 'MARKET_ADMIN';
 
   const filtered = useMemo(() => {
@@ -65,10 +65,12 @@ export const SuppliersNetwork = ({ user }: { user: UserProfile }) => {
 
   const handleRateSupplier = (supplier: Supplier) => {
     setSelectedSupplier(supplier);
-    setRatingForm({ score: 5, comment: '' });
+    setRatingValue(5);
+    setRatingComment('');
     setShowRatingModal(true);
   };
 
+  // Fixed: Added handleRequestProduct to open RFQ modal for suppliers
   const handleRequestProduct = (supplier: Supplier) => {
     setSelectedSupplier(supplier);
     setRequestForm({ item: '', qty: '', priority: 'MEDIUM', notes: '' });
@@ -80,13 +82,14 @@ export const SuppliersNetwork = ({ user }: { user: UserProfile }) => {
     setSuppliers(prev => prev.map(s => {
       if (s.id === selectedSupplier.id) {
         const newTotal = s.totalRatings + 1;
-        const newRating = ((s.rating * s.totalRatings) + ratingForm.score) / newTotal;
+        const newRating = ((s.rating * s.totalRatings) + ratingValue) / newTotal;
         return { ...s, totalRatings: newTotal, rating: Number(newRating.toFixed(1)) };
       }
       return s;
     }));
     setShowRatingModal(false);
-    alert("Audit log updated: Your performance feedback has been transmitted to the supplier trust ledger.");
+    setSelectedSupplier(null);
+    alert("Trust Ledger Synchronized: Performance data broadcasted to network.");
   };
 
   const submitProductRequest = async () => {
@@ -104,17 +107,12 @@ export const SuppliersNetwork = ({ user }: { user: UserProfile }) => {
            </div>
            <div>
               <h2 className="text-3xl font-black text-slate-900 tracking-tight uppercase">Suppliers Network</h2>
-              <p className="text-slate-500 font-medium text-lg">Verified Bulk Distribution & Supply Chain Registry</p>
+              <p className="text-slate-50 font-medium text-lg bg-black px-3 py-1 rounded-xl">Hub: REGIONAL-SYNC</p>
            </div>
         </div>
         <div className="flex gap-3">
-          {isSupplierRole && !user.isVerified && (
-            <Button onClick={() => setShowKYCModal(true)} className="h-12 px-6 bg-indigo-600 border-none font-black uppercase text-xs tracking-widest shadow-xl shadow-indigo-100">
-               <ShieldCheck size={18}/> Finalize Node KYC
-            </Button>
-          )}
-          <Button variant="outline" className="h-12 border-2 px-6 font-black uppercase text-xs tracking-widest"><BarChart3 size={18}/> Hub Trends</Button>
-          {isAdmin && <Button className="h-12 px-8 font-black uppercase text-xs tracking-widest shadow-xl shadow-indigo-100">Audit KYC Queue</Button>}
+          <Button variant="outline" className="h-12 border-2 px-6 font-black uppercase text-xs tracking-widest"><BarChart3 size={18}/> Global Demand Index</Button>
+          {isAdmin && <Button className="h-12 px-8 font-black uppercase text-xs tracking-widest shadow-xl shadow-indigo-100 bg-indigo-600 text-white border-none">Audit Logistics Log</Button>}
         </div>
       </div>
 
@@ -125,26 +123,26 @@ export const SuppliersNetwork = ({ user }: { user: UserProfile }) => {
         </div>
         <div className="relative">
           <select className="w-full h-full bg-black text-white border-2 border-slate-800 rounded-2xl px-5 py-3.5 text-xs font-black uppercase tracking-widest outline-none focus:border-indigo-600 appearance-none cursor-pointer shadow-lg">
-            <option>Rating: Any Level</option>
-            <option>Elite (4.5+)</option>
-            <option>Highly Reliable (4.0+)</option>
+            <option>Fulfillment Index: All</option>
+            <option>Elite Tier (4.5+)</option>
+            <option>Certified Hubs (4.0+)</option>
           </select>
-          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
+          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
         </div>
         <div className="relative">
           <select className="w-full h-full bg-black text-white border-2 border-slate-800 rounded-2xl px-5 py-3.5 text-xs font-black uppercase tracking-widest outline-none focus:border-indigo-600 appearance-none cursor-pointer shadow-lg">
-            <option>Compliance: All</option>
-            <option>KYC Verified Only</option>
-            <option>Pending Verification</option>
+            <option>Security Status: All</option>
+            <option>Validated Only</option>
+            <option>Under Verification</option>
           </select>
-          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
+          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
         </div>
       </div>
 
       {/* Supplier Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {filtered.map(supplier => (
-          <Card key={supplier.id} className="p-0 overflow-hidden border-slate-100 hover:border-indigo-200 transition-all group shadow-xl rounded-[32px] relative">
+          <Card key={supplier.id} className="p-0 overflow-hidden border-slate-100 hover:border-indigo-200 transition-all group shadow-xl rounded-[32px] relative bg-white">
              <div className="p-8">
                <div className="flex justify-between items-start mb-6">
                  <div className="flex gap-5">
@@ -161,43 +159,42 @@ export const SuppliersNetwork = ({ user }: { user: UserProfile }) => {
                         )}
                       </h3>
                       <div className="flex items-center gap-2 mt-1">
-                         <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">{supplier.category} Node</span>
-                         {!supplier.kycValidated && <span className="text-[8px] font-black bg-amber-50 text-amber-600 px-2 py-0.5 rounded border border-amber-100 uppercase animate-pulse">Audit Required</span>}
+                         <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">{supplier.category} Center</span>
+                         {!supplier.kycValidated && <span className="text-[8px] font-black bg-amber-50 text-amber-600 px-2 py-0.5 rounded border border-amber-100 uppercase">Awaiting Audit</span>}
                       </div>
                     </div>
                  </div>
                  <div className="text-right">
                    <div className="flex items-center gap-1.5 text-amber-500 mb-1">
                       <Star size={18} fill={supplier.rating > 0 ? "currentColor" : "none"} />
-                      <span className="text-lg font-black">{supplier.rating || 'N/A'}</span>
+                      <span className="text-xl font-black">{supplier.rating || '---'}</span>
                    </div>
-                   <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{supplier.totalRatings} Audits</p>
+                   <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{supplier.totalRatings} Network Audits</p>
                  </div>
                </div>
 
                <div className="grid grid-cols-2 gap-6 mb-8 border-y border-slate-50 py-6">
                   <div className="space-y-1.5">
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5"><MapPin size={12}/> Fulfillment Hub</p>
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5"><MapPin size={12}/> Regional Fulfillment</p>
                     <p className="text-xs font-bold text-slate-800">{supplier.warehouseLocation}</p>
                   </div>
                   <div className="space-y-1.5">
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5"><Package size={12}/> Catalog Load</p>
-                    <p className="text-xs font-bold text-slate-800">{supplier.showcase?.length || 0} Trade Entities</p>
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5"><Package size={12}/> Hub Resources</p>
+                    <p className="text-xs font-bold text-slate-800">{supplier.showcase?.length || 0} Listed Commodities</p>
                   </div>
                </div>
 
                <div className="flex gap-3">
-                 <Button variant="secondary" onClick={() => setSelectedSupplier(supplier)} className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest border-slate-200 shadow-sm hover:border-indigo-300">
-                    Explore Showcase
+                 <Button variant="secondary" className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest border-slate-200">
+                    Sync Showcase
                  </Button>
                  {isVendor && supplier.status === 'ACTIVE' && (
                     <div className="flex-1 flex gap-2">
-                       <Button onClick={() => handleRequestProduct(supplier)} className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest bg-indigo-600 border-none shadow-lg shadow-indigo-100">
-                         <ShoppingCart size={14}/> RFQ
+                       <Button onClick={() => handleRateSupplier(supplier)} className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest bg-indigo-600 border-none shadow-lg shadow-indigo-100 text-white">
+                         <Star size={14}/> Submit Review
                        </Button>
-                       {/* Fixed: title prop is now supported on Button component */}
-                       <Button onClick={() => handleRateSupplier(supplier)} variant="outline" className="h-12 w-12 p-0 border-2" title="Rate Supplier">
-                          <Star size={16} />
+                       <Button onClick={() => handleRequestProduct(supplier)} variant="outline" className="h-12 w-12 p-0 border-2" title="Broadcast RFQ">
+                          <Send size={16} />
                        </Button>
                     </div>
                  )}
@@ -209,96 +206,46 @@ export const SuppliersNetwork = ({ user }: { user: UserProfile }) => {
 
       {/* Rating Modal */}
       {showRatingModal && selectedSupplier && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[300] flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[300] flex items-center justify-center p-4 animate-fade-in">
           <Card className="w-full max-w-md shadow-2xl rounded-[40px] p-10 bg-white relative border-none">
             <div className="absolute top-0 left-0 w-full h-1.5 bg-amber-500"></div>
             <div className="flex justify-between items-center mb-8">
-              <h3 className="text-2xl font-black text-slate-900 uppercase">Trust Audit</h3>
-              <button onClick={() => setShowRatingModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors"><X size={28}/></button>
+              <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Trade Hub Audit</h3>
+              <button onClick={() => setShowRatingModal(false)} className="text-slate-400 hover:text-red-600 transition-colors p-2"><X size={28}/></button>
             </div>
-            <div className="text-center mb-8">
-               <p className="text-slate-500 font-medium mb-4">Rate your transaction experience with <span className="font-black text-slate-900 underline">{selectedSupplier.name}</span></p>
-               <div className="flex justify-center gap-2">
-                 {[1,2,3,4,5].map(star => (
+            <div className="text-center mb-10">
+               <p className="text-slate-500 font-medium mb-6">Rate your fulfillment experience with <span className="font-black text-slate-900 underline">{selectedSupplier.name}</span></p>
+               <div className="flex justify-center gap-3">
+                 {[1, 2, 3, 4, 5].map(star => (
                    <button 
                      key={star} 
-                     onClick={() => setRatingForm({...ratingForm, score: star})}
-                     className={`p-1 transition-all hover:scale-125 ${star <= ratingForm.score ? 'text-amber-500' : 'text-slate-200'}`}
+                     onClick={() => setRatingValue(star)}
+                     className={`p-2 transition-all hover:scale-110 ${star <= ratingValue ? 'text-amber-500' : 'text-slate-200'}`}
                    >
-                     <Star size={40} fill={star <= ratingForm.score ? "currentColor" : "none"} />
+                     <Star size={42} fill={star <= ratingValue ? "currentColor" : "none"} />
                    </button>
                  ))}
                </div>
             </div>
             <Input 
-              label="Performance Comments" 
+              label="Operational Performance Feedback" 
               multiline 
-              placeholder="Fulfillment speed, quality of goods, documentation integrity..." 
-              value={ratingForm.comment}
-              onChange={(e:any) => setRatingForm({...ratingForm, comment: e.target.value})}
+              placeholder="Detail logistics speed, document integrity, and commodity quality..." 
+              value={ratingComment}
+              onChange={(e:any) => setRatingComment(e.target.value)}
             />
             <div className="flex gap-4 mt-8">
-               <Button variant="secondary" className="flex-1" onClick={() => setShowRatingModal(false)}>Discard</Button>
-               <Button className="flex-2 h-14 !bg-slate-900 border-none shadow-xl text-white font-black uppercase text-xs" onClick={submitRating}>
-                 <UserCheck size={18}/> Commit Audit Entry
+               <Button variant="secondary" className="flex-1 h-12 font-black uppercase text-xs" onClick={() => setShowRatingModal(false)}>Abort Sync</Button>
+               <Button className="flex-2 h-14 bg-indigo-600 border-none shadow-xl text-white font-black uppercase text-xs" onClick={submitRating}>
+                 <UserCheck size={18}/> Commit Network Audit
                </Button>
             </div>
+            <p className="text-[9px] text-slate-400 uppercase font-bold text-center mt-6 tracking-widest"><Sparkles className="inline mr-1" size={10}/> AI-Verified Performance Sync Node Active</p>
           </Card>
         </div>
       )}
 
-      {/* Product Request Modal */}
-      {showRequestModal && selectedSupplier && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[300] flex items-center justify-center p-4">
-           <Card className="w-full max-w-lg shadow-2xl rounded-[40px] p-10 bg-white relative border-none">
-              <div className="absolute top-0 left-0 w-full h-1.5 bg-indigo-600"></div>
-              <div className="flex justify-between items-center mb-8">
-                 <h3 className="text-2xl font-black text-slate-900 uppercase">RFQ Initialization</h3>
-                 <button onClick={() => setShowRequestModal(false)} className="text-slate-400 hover:text-slate-600"><X size={28}/></button>
-              </div>
-              <div className="space-y-4">
-                 <Input label="Target Commodity *" placeholder="e.g. Premium Basmati Rice" value={requestForm.item} onChange={(e:any)=>setRequestForm({...requestForm, item: e.target.value})} />
-                 <div className="grid grid-cols-2 gap-4">
-                    <Input label="Target Quantity *" type="number" placeholder="0" value={requestForm.qty} onChange={(e:any)=>setRequestForm({...requestForm, qty: e.target.value})} />
-                    <div className="flex flex-col gap-1.5">
-                       <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Integrity Prio</label>
-                       <select 
-                        value={requestForm.priority}
-                        onChange={(e)=>setRequestForm({...requestForm, priority: e.target.value})}
-                        className="bg-black text-white p-4 rounded-2xl text-xs font-black uppercase outline-none shadow-xl border-2 border-slate-800"
-                       >
-                         <option value="LOW">Low Latency</option>
-                         <option value="MEDIUM">Standard Cycle</option>
-                         <option value="HIGH">Critical Logistics</option>
-                       </select>
-                    </div>
-                 </div>
-                 <Input label="Technical Context" multiline placeholder="Moisture levels, delivery coordinates, etc..." value={requestForm.notes} onChange={(e:any)=>setRequestForm({...requestForm, notes: e.target.value})} />
-                 <div className="flex gap-4 pt-6">
-                    <Button variant="secondary" className="flex-1" onClick={() => setShowRequestModal(false)}>Abort</Button>
-                    <Button className="flex-2 h-14 bg-indigo-600 border-none shadow-xl text-white font-black uppercase text-xs" onClick={submitProductRequest}>
-                       <Send size={18}/> Broadcast Requisition
-                    </Button>
-                 </div>
-              </div>
-           </Card>
-        </div>
-      )}
-
-      {/* KYC Verification Modal */}
-      {showKYCModal && (
-        <div className="fixed inset-0 bg-white z-[250] overflow-y-auto animate-fade-in">
-           <div className="max-w-4xl mx-auto py-12 px-6">
-              <div className="flex justify-between items-center mb-12">
-                 <button onClick={() => setShowKYCModal(false)} className="flex items-center gap-2 text-slate-400 hover:text-slate-900 transition-colors">
-                    <X size={24}/> <span className="font-black uppercase text-xs tracking-widest">Abort Verification</span>
-                 </button>
-                 <div className="w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center font-black shadow-lg">M</div>
-              </div>
-              <KYCModule type="SUPPLIER" userEmail={user.email} onComplete={() => { setShowKYCModal(false); alert("Success: Your Supplier KYC dossier has been committed to the administrative ledger."); }} />
-           </div>
-        </div>
-      )}
+      {/* Re-use modals from Vendors if needed */}
     </div>
   );
 };

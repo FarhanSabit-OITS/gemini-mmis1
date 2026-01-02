@@ -1,6 +1,4 @@
-
 import React, { useState } from 'react';
-// Fixed: Added CheckCircle2 to imports to resolve "Cannot find name 'CheckCircle2'" error
 import { Bell, Check, Trash2, Clock, Info, AlertTriangle, Package, Shield, Settings, Zap, CheckCircle2 } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
@@ -46,15 +44,15 @@ export const NotificationCenter = ({ onClose }: { onClose: () => void }) => {
   };
 
   return (
-    <div className="absolute right-0 mt-4 w-80 md:w-[450px] bg-white dark:bg-slate-900 rounded-[32px] shadow-2xl border border-slate-100 dark:border-slate-800 z-[100] overflow-hidden animate-slide-up ring-4 ring-black/5">
-      <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/30">
+    <div className="absolute right-0 mt-4 w-80 md:w-[450px] glass rounded-[32px] shadow-2xl border border-slate-100 dark:border-slate-800 z-[100] overflow-hidden animate-slide-up ring-4 ring-black/5">
+      <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/30 dark:bg-slate-800/10">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg">
             <Bell size={20} />
           </div>
           <div>
             <h3 className="font-black text-slate-800 dark:text-white uppercase tracking-tight text-sm">Event Stream</h3>
-            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{notifications.filter(n => !n.read).length} Unread Pulses</p>
+            <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest">{notifications.filter(n => !n.read).length} Unread Pulses</p>
           </div>
         </div>
         <div className="flex gap-2">

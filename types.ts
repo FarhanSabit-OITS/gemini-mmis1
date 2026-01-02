@@ -1,4 +1,3 @@
-
 export type Role = 'SUPER_ADMIN' | 'MARKET_ADMIN' | 'COUNTER_STAFF' | 'VENDOR' | 'SUPPLIER' | 'USER';
 
 export interface UserSettings {
@@ -39,6 +38,8 @@ export interface Vendor {
   market: string;
   rentDue: number;
   vatDue: number;
+  rating?: number;
+  ratingCount?: number;
   level?: string;
   section?: string;
   storeType?: 'STALL' | 'KIOSK' | 'SHOP' | 'WAREHOUSE';
@@ -86,10 +87,11 @@ export interface StockLog {
   quantity: number;
   unit: string;
   vendor: string;
-  type: 'INBOUND' | 'OUTBOUND';
+  type: 'INBOUND' | 'OUTBOUND' | 'ADJUSTMENT';
   timestamp: string;
   inspector: string;
-  status: 'VERIFIED' | 'FLAGGED' | 'PENDING';
+  status: 'VERIFIED' | 'FLAGGED' | 'PENDING' | 'SYNCED';
+  notes?: string;
 }
 
 export interface ParkingSlot {
