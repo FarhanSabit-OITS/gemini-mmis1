@@ -9,12 +9,12 @@ export default defineConfig({
     cssCodeSplit: true,
     sourcemap: false,
     assetsInlineLimit: 2048,
-    chunkSizeWarningLimit: 600,
+    chunkSizeWarningLimit: 800,
     terserOptions: {
       compress: {
         drop_console: true,
         drop_debugger: true,
-        pure_funcs: ['console.log', 'console.info', 'console.debug'],
+        pure_funcs: ['console.log', 'console.info'],
         passes: 3,
       },
       format: {

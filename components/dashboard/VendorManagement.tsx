@@ -8,7 +8,8 @@ import {
   Square, CheckSquare, AlertTriangle, MoreHorizontal,
   ArrowUpDown, Filter, Ban, Banknote, XCircle, Package,
   Plus, Edit, Trash2, Image as ImageIcon, Upload, LayoutGrid,
-  ChevronLeft, ChevronRight, Zap, Star
+  ChevronLeft, ChevronRight, Zap, Star, ListFilter, Tag,
+  ChevronDown
 } from 'lucide-react';
 import { GoogleGenAI } from '@google/genai';
 import { z } from 'zod';
@@ -276,29 +277,40 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
 
            <Card className="p-0 overflow-hidden rounded-[32px] shadow-2xl border-none bg-white dark:bg-slate-900">
               <div className="p-8 bg-slate-50 dark:bg-slate-800/30 border-b border-slate-100 dark:border-slate-800 flex flex-col xl:flex-row gap-4 justify-between items-center">
-                 <div className="w-full xl:w-96">
-                    <Input icon={Search} className="mb-0" placeholder="Search by Name, Category, ID..." value={search} onChange={(e:any)=>setSearch(e.target.value)} />
+                 <div className="w-full xl:w-80">
+                    <Input icon={Search} className="mb-0" placeholder="Search by Name, Email, ID..." value={search} onChange={(e:any)=>setSearch(e.target.value)} />
                  </div>
                  <div className="flex flex-wrap gap-3 w-full xl:w-auto items-center">
-                    <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-xs font-bold outline-none flex-1 xl:flex-none">
-                      <option value="ALL">All Categories</option>
-                      {availableCategories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-                    </select>
-                    <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-xs font-bold outline-none flex-1 xl:flex-none">
-                      <option value="ALL">All Statuses</option>
-                      <option value="ACTIVE">Active</option>
-                      <option value="PENDING">Pending</option>
-                      <option value="INACTIVE">Inactive</option>
-                    </select>
+                    <div className="relative flex-1 xl:flex-none">
+                       <Tag className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10" size={16}/>
+                       <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl pl-11 pr-10 py-3 text-[10px] font-black uppercase tracking-widest outline-none appearance-none cursor-pointer focus:border-indigo-500 shadow-sm transition-all min-w-[160px]">
+                        <option value="ALL">All Sectors</option>
+                        {availableCategories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                      </select>
+                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none" size={14} />
+                    </div>
+
+                    <div className="relative flex-1 xl:flex-none">
+                       <ListFilter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10" size={16}/>
+                       <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl pl-11 pr-10 py-3 text-[10px] font-black uppercase tracking-widest outline-none appearance-none cursor-pointer focus:border-indigo-500 shadow-sm transition-all min-w-[160px]">
+                        <option value="ALL">All Statuses</option>
+                        <option value="ACTIVE">Active Node</option>
+                        <option value="PENDING_APPROVAL">Pending Review</option>
+                        <option value="UNDER_REVIEW">Manual Audit</option>
+                        <option value="INACTIVE">Inactive / Offline</option>
+                      </select>
+                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none" size={14} />
+                    </div>
+
                     <button 
                       onClick={() => setShowDuesOnly(!showDuesOnly)}
-                      className={`h-[46px] px-4 rounded-xl text-xs font-black uppercase tracking-widest border flex items-center gap-2 transition-all shadow-sm ${
+                      className={`h-[46px] px-6 rounded-xl text-[10px] font-black uppercase tracking-widest border flex items-center gap-2 transition-all shadow-sm ${
                         showDuesOnly 
                         ? 'bg-red-50 dark:bg-red-900/30 text-red-600 border-red-200 dark:border-red-800' 
                         : 'bg-white dark:bg-slate-950 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-indigo-300'
                       }`}
                     >
-                      <Banknote size={16}/> {showDuesOnly ? <span>Dues &gt; 0</span> : 'Dues: Any'}
+                      <Banknote size={16}/> {showDuesOnly ? <span>Dues {'/'} 0</span> : 'Dues: Any'}
                     </button>
                  </div>
               </div>
@@ -351,7 +363,7 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
                            </button>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-lg">
+                          <span className="text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg">
                             {vendor.category}
                           </span>
                         </td>
@@ -360,13 +372,19 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
                           <p className="text-[9px] text-slate-400 font-medium">{vendor.city}</p>
                         </td>
                         <td className="px-6 py-4 text-right">
-                          {vendor.rentDue + vendor.vatDue > 0 ? (
-                            <div className="font-black text-xs text-red-600 dark:text-red-400">
-                               UGX {(vendor.rentDue + vendor.vatDue).toLocaleString()}
-                            </div>
-                          ) : (
-                            <div className="text-emerald-600 font-black text-xs flex items-center justify-end gap-1"><CheckCircle2 size={12}/> Settled</div>
-                          )}
+                          <div className={`px-3 py-1.5 rounded-xl inline-block transition-colors ${
+                            vendor.rentDue + vendor.vatDue > 0 
+                            ? 'bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30' 
+                            : 'bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/20'
+                          }`}>
+                            {vendor.rentDue + vendor.vatDue > 0 ? (
+                              <div className="font-black text-xs text-red-600 dark:text-red-400 whitespace-nowrap">
+                                 UGX {(vendor.rentDue + vendor.vatDue).toLocaleString()}
+                              </div>
+                            ) : (
+                              <div className="text-emerald-600 dark:text-emerald-500 font-black text-xs flex items-center justify-end gap-1"><CheckCircle2 size={12}/> Settled</div>
+                            )}
+                          </div>
                         </td>
                         <td className="px-6 py-4 text-center">
                           <span className={`px-2.5 py-1 rounded-full text-[8px] font-black uppercase border flex items-center justify-center gap-1.5 mx-auto w-24 ${
@@ -499,9 +517,15 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
               </Card>
 
               <div className="grid grid-cols-2 gap-4">
-                <Card className="p-6 bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 shadow-lg rounded-[24px]">
-                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Fiscal Liability</p>
-                  <p className="text-xl font-black text-slate-900 dark:text-white tracking-tighter">UGX {(viewingVendor.rentDue + viewingVendor.vatDue).toLocaleString()}</p>
+                <Card className={`p-6 border-none shadow-lg rounded-[24px] ${
+                  viewingVendor.rentDue + viewingVendor.vatDue > 0 
+                  ? 'bg-red-50 dark:bg-red-950/40 text-red-900 dark:text-red-100' 
+                  : 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white'
+                }`}>
+                  <p className={`text-[9px] font-black uppercase tracking-widest mb-1 ${viewingVendor.rentDue + viewingVendor.vatDue > 0 ? 'text-red-500' : 'text-slate-400'}`}>Fiscal Liability</p>
+                  <p className={`text-xl font-black tracking-tighter ${viewingVendor.rentDue + viewingVendor.vatDue > 0 ? 'text-red-600' : 'text-slate-900 dark:text-white'}`}>
+                    UGX {(viewingVendor.rentDue + viewingVendor.vatDue).toLocaleString()}
+                  </p>
                 </Card>
                 <Card className="p-6 bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 shadow-lg rounded-[24px]">
                   <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Join Date</p>

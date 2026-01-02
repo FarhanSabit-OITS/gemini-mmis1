@@ -1,7 +1,7 @@
 import React, { ErrorInfo, ReactNode } from 'react';
 import { RefreshCw, ShieldAlert } from 'lucide-react';
-import { Button } from './Button';
-import { Card } from './Card';
+import { Button } from './Button.tsx';
+import { Card } from './Card.tsx';
 
 interface Props {
   children?: ReactNode;
@@ -14,11 +14,9 @@ interface State {
 
 /**
  * ErrorBoundary component to catch rendering errors in the component tree.
- * Explicitly extends React.Component with Props and State generics to fix 
- * property access issues where 'state' and 'props' are not recognized.
  */
 export class ErrorBoundary extends React.Component<Props, State> {
-  // Proper constructor and state initialization to resolve property access errors
+  // Added: Explicit constructor to ensure Props and State types are correctly inherited and recognized by TypeScript
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -26,7 +24,6 @@ export class ErrorBoundary extends React.Component<Props, State> {
     };
   }
 
-  // Mandatory static method for Error Boundaries
   public static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
   }
@@ -36,7 +33,6 @@ export class ErrorBoundary extends React.Component<Props, State> {
   }
 
   public render() {
-    // Fixed: Access state via 'this' after ensuring inheritance from React.Component
     if (this.state.hasError) {
       return (
         <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
@@ -56,7 +52,6 @@ export class ErrorBoundary extends React.Component<Props, State> {
             <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl mb-8 border border-slate-100 dark:border-slate-700 text-left">
                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Error Trace</p>
                <p className="text-xs font-mono text-red-600 dark:text-red-400 break-words">
-                 {/* Fixed: Safely access error message from inherited state */}
                  {this.state.error?.message || 'Unknown Error'}
                </p>
             </div>
@@ -72,7 +67,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
       );
     }
 
-    // Fixed: Correctly return children from inherited props
+    // Fixed: Accessed this.props.children which is now valid in the class instance scope
     return this.props.children;
   }
 }
