@@ -7,7 +7,7 @@ import {
   ShieldCheck, ArrowRight, Award, MessageSquare, QrCode,
   Calendar, AlertCircle, TrendingDown, ClipboardCheck, ArrowUpRight
 } from 'lucide-react';
-import { GoogleGenAI } from '@google/genai';
+//import { GoogleGenAI } from '@google/genai';
 import { Card } from '../ui/Card';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
@@ -131,7 +131,7 @@ export const SupplyRequisitions = ({ user }: { user: UserProfile }) => {
                        </div>
                        <div className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${bridge.status === 'PREPARING' ? 'bg-indigo-600 text-white animate-pulse' : 'bg-emerald-500 text-white'}`}>{bridge.status}</div>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-12 mb-12">
                        <div className="space-y-2">
                           <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Next Departure</p>

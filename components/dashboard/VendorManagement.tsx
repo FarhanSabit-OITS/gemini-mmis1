@@ -11,7 +11,7 @@ import {
   ChevronLeft, ChevronRight, Zap, Star, ListFilter, Tag,
   ChevronDown, AlertCircle, UserCheck
 } from 'lucide-react';
-import { GoogleGenAI } from '@google/genai';
+//import { GoogleGenAI } from '@google/genai';
 import { z } from 'zod';
 import { Card } from '../ui/Card.tsx';
 import { Input } from '../ui/Input.tsx';
@@ -183,35 +183,35 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
   const fetchLocationGrounding = async (vendor: Vendor) => {
     setLoadingMap(true);
     setMapGrounding(null);
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: `Provide exact physical location details and nearby landmarks for ${vendor.market} in ${vendor.city}, Uganda. This is for vendor: ${vendor.name}.`,
-        config: {
-          tools: [{ googleMaps: {} }],
-        },
-      });
+    // try {
+    //   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    //   const response = await ai.models.generateContent({
+    //     model: 'gemini-2.5-flash',
+    //     contents: `Provide exact physical location details and nearby landmarks for ${vendor.market} in ${vendor.city}, Uganda. This is for vendor: ${vendor.name}.`,
+    //     config: {
+    //       tools: [{ googleMaps: {} }],
+    //     },
+    //   });
 
-      const text = response.text || "No descriptive location data available.";
-      const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
-      const links = chunks
-        .filter((c: any) => c.maps)
-        .map((c: any) => ({
-          title: c.maps.title || "View on Google Maps",
-          uri: c.maps.uri
-        }));
+    //   const text = response.text || "No descriptive location data available.";
+    //   const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
+    //   const links = chunks
+    //     .filter((c: any) => c.maps)
+    //     .map((c: any) => ({
+    //       title: c.maps.title || "View on Google Maps",
+    //       uri: c.maps.uri
+    //     }));
 
-      setMapGrounding({ text, links });
-    } catch (e) {
-      console.error("Grounding failed", e);
-      setMapGrounding({
-        text: "Could not retrieve real-time spatial data. Showing estimated coordinates.",
-        links: [{ title: "Search on Maps", uri: `https://www.google.com/maps/search/${encodeURIComponent(vendor.market + ' ' + vendor.city)}` }]
-      });
-    } finally {
-      setLoadingMap(false);
-    }
+    //   setMapGrounding({ text, links });
+    // } catch (e) {
+    //   console.error("Grounding failed", e);
+    //   setMapGrounding({
+    //     text: "Could not retrieve real-time spatial data. Showing estimated coordinates.",
+    //     links: [{ title: "Search on Maps", uri: `https://www.google.com/maps/search/${encodeURIComponent(vendor.market + ' ' + vendor.city)}` }]
+    //   });
+    // } finally {
+    //   setLoadingMap(false);
+    // }
   };
 
   return (
