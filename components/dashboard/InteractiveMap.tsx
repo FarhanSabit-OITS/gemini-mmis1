@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin, Navigation, Search, Building2, Info, ExternalLink, Globe, Layers, Map as MapIcon, Compass, AlertCircle, RefreshCw } from 'lucide-react';
-//import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI } from '@google/genai';
 import { Card } from '../ui/Card';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
@@ -24,35 +24,35 @@ export const InteractiveMap = ({ user, initialMarketId }: InteractiveMapProps) =
   const fetchMarketGrounding = async (marketName: string) => {
     setLoading(true);
     setError(null);
-  //   try {
-  //     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-  //     const response = await ai.models.generateContent({
-  //       model: 'gemini-2.5-flash',
-  //       contents: `Find the exact address, location details, and nearby landmarks for ${marketName} in Uganda.`,
-  //       config: {
-  //         tools: [{ googleMaps: {} }],
-  //       },
-  //     });
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: `Find the exact address, location details, and nearby landmarks for ${marketName} in Uganda.`,
+        config: {
+          tools: [{ googleMaps: {} }],
+        },
+      });
 
-  //     const grounding = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
-  //     const mapLink = grounding?.find((c: any) => c.maps?.uri)?.maps?.uri;
+      const grounding = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
+      const mapLink = grounding?.find((c: any) => c.maps?.uri)?.maps?.uri;
       
-  //     setMapDetails({
-  //       description: response.text || "No descriptive location data returned.",
-  //       uri: mapLink || `https://www.google.com/maps/search/${encodeURIComponent(marketName + ' Uganda')}`,
-  //     });
-  //   } catch (err: any) {
-  //     console.error("Grounding error:", err);
-  //     setError("Registry sync failed. Displaying fallback coordinate data.");
-  //     setMapDetails({
-  //       description: `Location data for ${marketName} is currently being synced from regional registries. Please consult hub management for precise stalling data.`,
-  //       uri: `https://www.google.com/maps/search/${encodeURIComponent(marketName + ' Uganda')}`,
-  //     });
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-  }
+      setMapDetails({
+        description: response.text || "No descriptive location data returned.",
+        uri: mapLink || `https://www.google.com/maps/search/${encodeURIComponent(marketName + ' Uganda')}`,
+      });
+    } catch (err: any) {
+      console.error("Grounding error:", err);
+      setError("Registry sync failed. Displaying fallback coordinate data.");
+      setMapDetails({
+        description: `Location data for ${marketName} is currently being synced from regional registries. Please consult hub management for precise stalling data.`,
+        uri: `https://www.google.com/maps/search/${encodeURIComponent(marketName + ' Uganda')}`,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (selectedMarket) {
       fetchMarketGrounding(selectedMarket.name);

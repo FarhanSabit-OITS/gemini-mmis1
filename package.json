@@ -1,43 +1,48 @@
 {
   "name": "mmis-multi-vendor-erp",
   "private": true,
-  "version": "4.0.0",
+  "version": "4.1.0",
   "type": "module",
   "description": "Enterprise-grade Multi-Vendor Management Information System (MMIS) with AI-powered BI, real-time analytics, and spatial logistics tracking.",
   "author": "MMIS Team / Tevas UG",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run clean && tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "format": "prettier --write \"**/*.{ts,tsx,css,md}\"",
+    "clean": "rimraf dist",
     "type-check": "tsc --noEmit",
     "audit": "npm audit --audit-level=high"
   },
   "dependencies": {
+    "@google/genai": "^0.21.0",
     "clsx": "^2.1.1",
-    "lucide-react": "^0.562.0",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
-    "recharts": "^3.6.0",
-    "tailwind-merge": "^3.4.0",
-    "zod": "^4.3.4"
+    "lucide-react": "^0.474.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "recharts": "^2.15.0",
+    "tailwind-merge": "^3.0.1",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@types/node": "^25.0.3",
-    "@types/react": "^19.2.7",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^5.1.2",
-    "autoprefixer": "^10.4.23",
-    "eslint": "^9.39.2",
-    "eslint-plugin-react-hooks": "^7.0.1",
-    "eslint-plugin-react-refresh": "^0.4.26",
-    "postcss": "^8.5.6",
-    "prettier": "^3.7.4",
-    "rimraf": "^6.1.2",
-    "tailwindcss": "^4.1.18",
-    "terser": "^5.44.1",
-    "typescript": "^5.9.3",
-    "vite": "^7.3.0"
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.1",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "postcss": "^8.4.49",
+    "prettier": "^3.4.2",
+    "rimraf": "^6.0.1",
+    "tailwindcss": "^3.4.17",
+    "terser": "^5.37.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.5"
   }
 }

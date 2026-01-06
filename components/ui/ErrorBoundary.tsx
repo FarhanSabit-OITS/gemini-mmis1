@@ -1,8 +1,5 @@
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { RefreshCw, ShieldAlert } from 'lucide-react';
-import { Button } from './Button.tsx';
-import { Card } from './Card.tsx';
 
 interface Props {
   children?: ReactNode;
@@ -13,20 +10,10 @@ interface State {
   error?: Error;
 }
 
-/**
- * ErrorBoundary component to catch rendering errors in the component tree.
- */
-// Fix: Explicitly extending Component from 'react' helps TypeScript resolve the 'props' and 'state' properties correctly
 export class ErrorBoundary extends Component<Props, State> {
-  // Fix: Explicitly typed state initialization for better type inference
   public state: State = {
     hasError: false
   };
-
-  // Fix: Standard constructor to initialize the base class and ensure property access
-  constructor(props: Props) {
-    super(props);
-  }
 
   public static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
@@ -37,43 +24,92 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public render() {
-    // Fix: Accessing state via 'this' which is now correctly recognized as Component instance
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
-          <Card className="max-w-md w-full text-center p-12 rounded-[40px] shadow-2xl border-none relative overflow-hidden bg-white dark:bg-slate-900">
-            <div className="absolute top-0 left-0 w-full h-2 bg-red-500"></div>
-            
-            <div className="w-24 h-24 bg-red-50 dark:bg-red-900/20 text-red-500 rounded-[32px] flex items-center justify-center mx-auto mb-8 shadow-xl">
-              <ShieldAlert size={48} />
+        <div style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#f8fafc',
+          color: '#0f172a',
+          fontFamily: 'system-ui, -apple-system, sans-serif'
+        }}>
+          <div style={{
+            maxWidth: '28rem',
+            width: '100%',
+            padding: '2rem',
+            backgroundColor: 'white',
+            borderRadius: '1rem',
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+            textAlign: 'center',
+            border: '1px solid #e2e8f0'
+          }}>
+            <div style={{
+              width: '4rem',
+              height: '4rem',
+              backgroundColor: '#fee2e2',
+              color: '#ef4444',
+              borderRadius: '9999px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1.5rem auto'
+            }}>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 9v4"></path>
+                <path d="M12 17h.01"></path>
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
             </div>
             
-            <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-4 tracking-tight uppercase">System Anomaly</h1>
+            <h1 style={{ fontSize: '1.5rem', fontWeight: '800', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>System Anomaly</h1>
             
-            <p className="text-slate-500 dark:text-slate-400 mb-10 font-medium leading-relaxed">
-              The application encountered a critical rendering exception. Our engineers have been notified via the audit log.
+            <p style={{ color: '#64748b', marginBottom: '2rem', lineHeight: '1.5' }}>
+              The application encountered a critical rendering exception.
             </p>
             
-            <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl mb-8 border border-slate-100 dark:border-slate-700 text-left">
-               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Error Trace</p>
-               <p className="text-xs font-mono text-red-600 dark:text-red-400 break-words">
-                 {/* Fix: Safely accessing error message from component state instance */}
+            <div style={{
+              backgroundColor: '#f1f5f9',
+              padding: '1rem',
+              borderRadius: '0.5rem',
+              marginBottom: '2rem',
+              textAlign: 'left',
+              overflowX: 'auto',
+              border: '1px solid #e2e8f0'
+            }}>
+               <p style={{ fontSize: '0.65rem', fontWeight: '900', textTransform: 'uppercase', color: '#94a3b8', marginBottom: '0.5rem', letterSpacing: '0.1em' }}>Error Trace</p>
+               <pre style={{ margin: 0, fontSize: '0.75rem', color: '#ef4444', fontFamily: 'monospace', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
                  {this.state.error?.message || 'Unknown Error'}
-               </p>
+               </pre>
             </div>
 
-            <Button 
+            <button 
               onClick={() => window.location.reload()} 
-              className="w-full h-16 bg-red-600 hover:bg-red-700 text-white border-none shadow-2xl shadow-red-200 dark:shadow-none font-black uppercase text-xs rounded-2xl tracking-widest"
+              style={{
+                width: '100%',
+                padding: '1rem',
+                backgroundColor: '#dc2626',
+                color: 'white',
+                border: 'none',
+                borderRadius: '0.75rem',
+                fontWeight: '900',
+                textTransform: 'uppercase',
+                letterSpacing: '0.1em',
+                cursor: 'pointer',
+                transition: 'background-color 0.2s',
+                fontSize: '0.75rem'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#b91c1c'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#dc2626'}
             >
-              <RefreshCw size={18} className="mr-2" /> Reboot System
-            </Button>
-          </Card>
+              Reboot System
+            </button>
+          </div>
         </div>
       );
     }
 
-    // Fix: Accessing inherited props property to return children correctly from the component instance
-    return this.props.children || null;
+    return this.props.children;
   }
 }

@@ -8,7 +8,7 @@ import {
   ArrowRight, LayoutGrid, ClipboardList, RefreshCw, ChevronDown,
   Image as ImageIcon, Trash2, Smartphone
 } from 'lucide-react';
-//import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI } from '@google/genai';
 import { Card } from '../ui/Card';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
@@ -70,17 +70,17 @@ export const TicketingSystem = ({ user }: { user: UserProfile }) => {
   const getAiInsights = async (ticket: Ticket) => {
     setLoadingAi(true);
     setAiSummary('');
-    // try {
-    //   //const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-    //   //const response = await ai.models.generateContent({
-    //     model: 'gemini-3-flash-preview',
-    //     contents: `Analyze this market support ticket. ${ticket.attachmentUrl ? 'There is a photo attached for visual evidence.' : ''} Ticket: ${ticket.title} - ${ticket.description}`
-    //   });
-    //   setAiSummary(response.text || 'Analysis node complete. Manual verification required.');
-    // } catch (e) {
-    //   setAiSummary('AI insights temporarily disconnected.');
-    // }
-    //setLoadingAi(false);
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const response = await ai.models.generateContent({
+        model: 'gemini-3-flash-preview',
+        contents: `Analyze this market support ticket. ${ticket.attachmentUrl ? 'There is a photo attached for visual evidence.' : ''} Ticket: ${ticket.title} - ${ticket.description}`
+      });
+      setAiSummary(response.text || 'Analysis node complete. Manual verification required.');
+    } catch (e) {
+      setAiSummary('AI insights temporarily disconnected.');
+    }
+    setLoadingAi(false);
   };
 
   const contextIcons = {

@@ -6,7 +6,7 @@ import {
   Navigation, Info, Sparkles, X, Map as MapIcon, RefreshCw, PieChart as PieIcon,
   Landmark
 } from 'lucide-react';
-//import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI } from '@google/genai';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, 
   ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area, Legend
@@ -117,34 +117,34 @@ export const MarketRegistry = ({ user }: { user: UserProfile }) => {
     setGroundingMarket(market);
     setLoadingGrounding(true);
     setGroundingData(null);
-    // try {
-    //   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-    //   const response = await ai.models.generateContent({
-    //     model: 'gemini-2.5-flash',
-    //     contents: `Provide exact physical location details, directions, and nearby trade landmarks for ${market.name} in ${market.city}, Uganda. Explain how a vendor can reach there from the city center.`,
-    //     config: {
-    //       tools: [{ googleMaps: {} }],
-    //     },
-    //   });
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: `Provide exact physical location details, directions, and nearby trade landmarks for ${market.name} in ${market.city}, Uganda. Explain how a vendor can reach there from the city center.`,
+        config: {
+          tools: [{ googleMaps: {} }],
+        },
+      });
 
-    //   const text = response.text || "No descriptive data available.";
-    //   const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
-    //   const links = chunks
-    //     .filter((c: any) => c.maps)
-    //     .map((c: any) => ({
-    //       title: c.maps.title || "Open in Google Maps",
-    //       uri: c.maps.uri
-    //     }));
+      const text = response.text || "No descriptive data available.";
+      const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
+      const links = chunks
+        .filter((c: any) => c.maps)
+        .map((c: any) => ({
+          title: c.maps.title || "Open in Google Maps",
+          uri: c.maps.uri
+        }));
 
-    //   setGroundingData({ text, links });
-    // } catch (e) {
-    //   setGroundingData({ 
-    //     text: "System could not establish a real-time grounding link. Please verify via local regional offices.", 
-    //     links: [{ title: "Fallback Search", uri: `https://www.google.com/maps/search/${encodeURIComponent(market.name + ' ' + market.city)}` }] 
-    //   });
-    // } finally {
-    //   setLoadingGrounding(false);
-    // }
+      setGroundingData({ text, links });
+    } catch (e) {
+      setGroundingData({ 
+        text: "System could not establish a real-time grounding link. Please verify via local regional offices.", 
+        links: [{ title: "Fallback Search", uri: `https://www.google.com/maps/search/${encodeURIComponent(market.name + ' ' + market.city)}` }] 
+      });
+    } finally {
+      setLoadingGrounding(false);
+    }
   };
 
   return (

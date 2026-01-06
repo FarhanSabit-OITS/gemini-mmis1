@@ -37,6 +37,11 @@ export default defineConfig({
             if (id.includes('@google/genai')) return 'vendor-ai';
             return 'vendor-libs';
           }
+          // Splitting functional dashboard components
+          if (id.includes('components/dashboard/')) {
+            const parts = id.split('/');
+            return `module-${parts[parts.length - 1].split('.')[0].toLowerCase()}`;
+          }
         },
       },
     },

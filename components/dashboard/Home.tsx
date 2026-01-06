@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Package, Store, Users, TrendingUp, ArrowRight, Plus, ShieldCheck, DollarSign, Clock, AlertCircle, CheckCircle, BarChart3, LineChart, PieChart, RefreshCw } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, 
+import { GoogleGenAI } from '@google/genai';
+import { 
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, 
   ResponsiveContainer, AreaChart, Area, Cell, PieChart as RePieChart, Pie
 } from 'recharts';
 import { UserProfile } from '../../types';
@@ -18,16 +20,16 @@ export const Home = ({ user }: { user: UserProfile }) => {
     setLoadingInsights(true);
     setErrorInsights(null);
     try {
-      // const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      // const response = await ai.models.generateContent({
-      //   model: 'gemini-3-flash-preview',
-      //   contents: `Provide a professional 2-sentence market trend analysis for a user with the role ${user.role} in a multi-vendor ecommerce system. Focus on BI and performance.`,
-      // });
-      // if (response.text) {
-      //   setInsights(response.text);
-      // } else {
-      //   throw new Error('Malformed AI response signal.');
-      // }
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const response = await ai.models.generateContent({
+        model: 'gemini-3-flash-preview',
+        contents: `Provide a professional 2-sentence market trend analysis for a user with the role ${user.role} in a multi-vendor ecommerce system. Focus on BI and performance.`,
+      });
+      if (response.text) {
+        setInsights(response.text);
+      } else {
+        throw new Error('Malformed AI response signal.');
+      }
     } catch (e: any) {
       console.error('AI Insights Error:', e);
       setErrorInsights(e.message || 'Node connectivity failure.');
