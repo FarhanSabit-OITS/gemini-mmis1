@@ -8,8 +8,8 @@ export default defineConfig({
     minify: 'terser',
     cssCodeSplit: true,
     sourcemap: false,
-    assetsInlineLimit: 2048,
-    chunkSizeWarningLimit: 800,
+    assetsInlineLimit: 4096,
+    chunkSizeWarningLimit: 1000,
     terserOptions: {
       compress: {
         drop_console: true,
@@ -32,14 +32,19 @@ export default defineConfig({
         assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('react')) return 'vendor-core';
+            if (id.includes('react')) return 'vendor-react';
             if (id.includes('recharts')) return 'vendor-charts';
             if (id.includes('lucide')) return 'vendor-icons';
             if (id.includes('@google/genai')) return 'vendor-ai';
             if (id.includes('zod')) return 'vendor-validation';
-            return 'vendor-libs';
+            return 'vendor-utils';
           }
           if (id.includes('components/ui/')) return 'module-ui-core';
+          if (id.includes('components/dashboard/')) {
+            const parts = id.split('/');
+            const name = parts[parts.length - 1].split('.')[0].toLowerCase();
+            return `module-dash-${name}`;
+          }
         },
       },
     },
@@ -56,7 +61,8 @@ export default defineConfig({
       'lucide-react',
       'clsx',
       'tailwind-merge',
-      '@google/genai'
+      '@google/genai',
+      'zod'
     ],
   },
 });

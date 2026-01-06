@@ -1,7 +1,7 @@
 {
   "name": "mmis-multi-vendor-erp",
   "private": true,
-  "version": "4.0.0",
+  "version": "4.1.2",
   "type": "module",
   "description": "Enterprise-grade Multi-Vendor Management Information System (MMIS) with AI-powered BI, real-time analytics, and spatial logistics tracking.",
   "author": "MMIS Team / Tevas UG",
