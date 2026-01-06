@@ -112,10 +112,14 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
   }, [vendors, search, categoryFilter, statusFilter, showDuesOnly, sortConfig]);
 
   const handleSelectAll = () => {
-    if (selectedVendorIds.size === filteredVendors.length) {
-      setSelectedVendorIds(new Set());
-    } else {
-      setSelectedVendorIds(new Set(filteredVendors.map(v => v.id)));
+    try {
+      if (selectedVendorIds.size === filteredVendors.length) {
+        setSelectedVendorIds(new Set());
+      } else {
+        setSelectedVendorIds(new Set(filteredVendors.map(v => v.id)));
+      }
+    } catch (e) {
+      console.error("Registry selection failure:", e);
     }
   };
 
@@ -128,13 +132,17 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
 
   const executeBulkAction = () => {
     if (!bulkAction) return;
-    const newStatus = bulkAction === 'ACTIVATE' ? 'ACTIVE' : 'INACTIVE';
-    setVendors(prev => prev.map(v => 
-      selectedVendorIds.has(v.id) ? { ...v, status: newStatus as any } : v
-    ));
-    setSelectedVendorIds(new Set());
-    setShowBulkConfirm(false);
-    setBulkAction(null);
+    try {
+      const newStatus = bulkAction === 'ACTIVATE' ? 'ACTIVE' : 'INACTIVE';
+      setVendors(prev => prev.map(v => 
+        selectedVendorIds.has(v.id) ? { ...v, status: newStatus as any } : v
+      ));
+      setSelectedVendorIds(new Set());
+      setShowBulkConfirm(false);
+      setBulkAction(null);
+    } catch (e) {
+      console.error("Bulk sync exception:", e);
+    }
   };
 
   const fetchLocationGrounding = async (vendor: Vendor) => {
@@ -217,7 +225,7 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
                         : 'bg-white dark:bg-slate-950 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-indigo-300'
                       }`}
                     >
-                      <Banknote size={16}/> {showDuesOnly ? <span>Dues {'>'} 0</span> : 'Dues: Any'}
+                      <Banknote size={16}/> {showDuesOnly ? <span>Dues &gt; 0</span> : 'Dues: Any'}
                     </button>
                  </div>
               </div>
@@ -266,7 +274,7 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
                           </span>
                         </td>
                         <td className="px-6 py-4 text-right font-black text-xs">
-                          {vendor.rentDue + vendor.vatDue > 0 ? (
+                          {(vendor.rentDue + vendor.vatDue) > 0 ? (
                             <span className="text-red-600">UGX {(vendor.rentDue + vendor.vatDue).toLocaleString()}</span>
                           ) : (
                             <span className="text-emerald-600 flex items-center justify-end gap-1"><CheckCircle2 size={12}/> Settled</span>
@@ -364,8 +372,8 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
                  </Card>
                  <Card className="p-6 bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 shadow-xl rounded-3xl">
                     <p className="text-[10px] font-black text-slate-400 uppercase mb-1">Fiscal Status</p>
-                    <p className={`text-xl font-black ${viewingVendor.rentDue + viewingVendor.vatDue > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
-                       {viewingVendor.rentDue + viewingVendor.vatDue > 0 ? `UGX ${(viewingVendor.rentDue+viewingVendor.vatDue).toLocaleString()}` : 'Settled'}
+                    <p className={`text-xl font-black ${ (viewingVendor.rentDue + viewingVendor.vatDue) > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                       {(viewingVendor.rentDue + viewingVendor.vatDue) > 0 ? `UGX ${(viewingVendor.rentDue+viewingVendor.vatDue).toLocaleString()}` : 'Settled'}
                     </p>
                  </Card>
               </div>

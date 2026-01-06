@@ -1,7 +1,7 @@
 {
   "name": "mmis-multi-vendor-erp",
   "private": true,
-  "version": "4.1.0",
+  "version": "4.1.1",
   "type": "module",
   "description": "Enterprise-grade Multi-Vendor Management Information System (MMIS) with AI-powered BI, real-time analytics, and spatial logistics tracking.",
   "author": "MMIS Team / Tevas UG",
@@ -22,10 +22,10 @@
   "dependencies": {
     "@google/genai": "^0.21.0",
     "clsx": "^2.1.1",
-    "lucide-react": "^0.474.0",
+    "lucide-react": "^0.475.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "recharts": "^2.15.0",
+    "recharts": "^2.15.1",
     "tailwind-merge": "^3.0.1",
     "zod": "^3.24.1"
   },
@@ -43,6 +43,6 @@
     "tailwindcss": "^3.4.17",
     "terser": "^5.37.0",
     "typescript": "^5.7.2",
-    "vite": "^6.0.5"
+    "vite": "^6.1.0"
   }
 }

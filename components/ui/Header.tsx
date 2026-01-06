@@ -62,7 +62,7 @@ export const Header = ({
   useEffect(() => {
     const timer = setTimeout(() => {
       setSearchQuery(inputValue);
-    }, 300);
+    }, 250); // Lowered latency for Snappier feel
 
     return () => clearTimeout(timer);
   }, [inputValue]);
@@ -102,15 +102,20 @@ export const Header = ({
       const id = item.id.toLowerCase();
       const sub = (item.sub || '').toLowerCase();
 
-      // 1. Exact Match Priority
-      if (name === q || id === q) score += 1000;
-      else if (name.startsWith(q) || id.startsWith(q)) score += 500;
+      // 1. Direct ID / Exact Match (Highest Weighting)
+      if (id === q) score += 2000;
+      else if (name === q) score += 1000;
+      // 2. Prefix matching
+      else if (id.startsWith(q)) score += 800;
+      else if (name.startsWith(q)) score += 500;
+      // 3. Substring matching
       else if (name.includes(q) || id.includes(q) || sub.includes(q)) score += 200;
+      // 4. Fuzzy Levenshtein (Typo Tolerance)
       else {
         const dist = levenshteinDistance(name, q);
         const maxLength = Math.max(name.length, q.length);
         const similarity = 1 - dist / maxLength;
-        if (similarity > 0.5) score += 100 * similarity;
+        if (similarity > 0.6) score += 100 * similarity;
       }
       return { ...item, score };
     }).filter(item => item.score > 0).sort((a, b) => b.score - a.score);

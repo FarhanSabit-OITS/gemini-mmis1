@@ -8,14 +8,15 @@ export default defineConfig({
     minify: 'terser',
     cssCodeSplit: true,
     sourcemap: false,
-    assetsInlineLimit: 2048,
-    chunkSizeWarningLimit: 800,
+    assetsInlineLimit: 4096,
+    chunkSizeWarningLimit: 1000,
     terserOptions: {
       compress: {
         drop_console: true,
         drop_debugger: true,
-        pure_funcs: ['console.log', 'console.info'],
+        pure_funcs: ['console.log', 'console.info', 'console.debug'],
         passes: 3,
+        ecma: 2020,
       },
       format: {
         comments: false,
@@ -31,16 +32,18 @@ export default defineConfig({
         assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('react')) return 'vendor-core';
+            if (id.includes('react')) return 'vendor-react';
             if (id.includes('recharts')) return 'vendor-charts';
             if (id.includes('lucide')) return 'vendor-icons';
             if (id.includes('@google/genai')) return 'vendor-ai';
-            return 'vendor-libs';
+            if (id.includes('zod')) return 'vendor-validation';
+            return 'vendor-utils';
           }
-          // Splitting functional dashboard components
+          if (id.includes('components/ui/')) return 'module-ui-core';
           if (id.includes('components/dashboard/')) {
             const parts = id.split('/');
-            return `module-${parts[parts.length - 1].split('.')[0].toLowerCase()}`;
+            const name = parts[parts.length - 1].split('.')[0].toLowerCase();
+            return `module-dash-${name}`;
           }
         },
       },
@@ -58,7 +61,8 @@ export default defineConfig({
       'lucide-react',
       'clsx',
       'tailwind-merge',
-      '@google/genai'
+      '@google/genai',
+      'zod'
     ],
   },
 });

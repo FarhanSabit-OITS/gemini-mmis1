@@ -10,7 +10,8 @@ interface State {
   error?: Error;
 }
 
-export class ErrorBoundary extends Component<Props, State> {
+// Fixed: Explicitly extending React.Component to ensure 'props' is correctly inherited and typed within the class
+export class ErrorBoundary extends React.Component<Props, State> {
   public state: State = {
     hasError: false
   };
@@ -110,6 +111,7 @@ export class ErrorBoundary extends Component<Props, State> {
       );
     }
 
+    // Fixed: 'this.props' is now correctly recognized as inherited from React.Component<Props, State>
     return this.props.children;
   }
 }
