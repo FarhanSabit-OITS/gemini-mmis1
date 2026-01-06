@@ -184,16 +184,16 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
   return (
     <div className="space-y-6 animate-fade-in relative pb-20">
       {/* Tab Controls */}
-      <div className="flex flex-wrap gap-2 glass p-2 rounded-2xl w-fit border-slate-200 dark:border-slate-700 shadow-inner">
+      <nav className="flex flex-wrap gap-2 glass p-2 rounded-2xl w-fit border-slate-200 dark:border-slate-700 shadow-inner" aria-label="Management Tabs">
         {isAdmin && <button onClick={() => setActiveTab('DIRECTORY')} className={`px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'DIRECTORY' ? 'bg-indigo-600 text-white shadow-xl' : 'text-slate-500 hover:text-indigo-600'}`}>Registry</button>}
         {isVendor && <button onClick={() => setActiveTab('FINANCIALS')} className={`px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'FINANCIALS' ? 'bg-indigo-600 text-white shadow-xl' : 'text-slate-500 hover:text-indigo-600'}`}>Settlement Node</button>}
-      </div>
+      </nav>
 
       {activeTab === 'DIRECTORY' && isAdmin && (
         <div className="space-y-4">
            {/* Bulk Action Bar */}
            {selectedVendorIds.size > 0 && (
-             <div className="bg-indigo-600 text-white p-4 rounded-2xl flex items-center justify-between shadow-2xl animate-slide-up ring-4 ring-indigo-500/20">
+             <div className="bg-indigo-600 text-white p-4 rounded-2xl flex items-center justify-between shadow-2xl animate-slide-up ring-4 ring-indigo-500/20" role="alert">
                 <div className="flex items-center gap-4">
                    <CheckSquare size={20} />
                    <span className="text-xs font-black uppercase tracking-widest">{selectedVendorIds.size} Registry Nodes Selected</span>
@@ -208,12 +208,17 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
            <Card className="p-0 overflow-hidden rounded-[32px] shadow-2xl border-none bg-white dark:bg-slate-900">
               <div className="p-8 bg-slate-50 dark:bg-slate-800/30 border-b border-slate-100 dark:border-slate-800 flex flex-col xl:flex-row gap-4 justify-between items-center">
                  <div className="w-full xl:w-96">
-                    <Input icon={Search} className="mb-0" placeholder="Search name, ID, category or hub..." value={search} onChange={(e:any)=>setSearch(e.target.value)} />
+                    <Input icon={Search} className="mb-0" placeholder="Search name, ID, category or hub..." value={search} onChange={(e:any)=>setSearch(e.target.value)} aria-label="Search Vendors" />
                  </div>
                  <div className="flex flex-wrap gap-3 w-full xl:w-auto">
                     <div className="relative">
                        <Tag className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10" size={16}/>
-                       <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl pl-11 pr-10 py-3 text-[10px] font-black uppercase tracking-widest outline-none appearance-none cursor-pointer focus:border-indigo-500 shadow-sm min-w-[160px]">
+                       <select 
+                         value={categoryFilter} 
+                         onChange={(e) => setCategoryFilter(e.target.value)} 
+                         aria-label="Filter by Category"
+                         className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl pl-11 pr-10 py-3 text-[10px] font-black uppercase tracking-widest outline-none appearance-none cursor-pointer focus:border-indigo-500 shadow-sm min-w-[160px]"
+                        >
                         <option value="ALL">All Categories</option>
                         {availableCategories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                       </select>
@@ -222,7 +227,12 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
 
                     <div className="relative">
                        <ListFilter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10" size={16}/>
-                       <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl pl-11 pr-10 py-3 text-[10px] font-black uppercase tracking-widest outline-none appearance-none cursor-pointer focus:border-indigo-500 shadow-sm min-w-[160px]">
+                       <select 
+                        value={statusFilter} 
+                        onChange={(e) => setStatusFilter(e.target.value)} 
+                        aria-label="Filter by Hub Status"
+                        className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl pl-11 pr-10 py-3 text-[10px] font-black uppercase tracking-widest outline-none appearance-none cursor-pointer focus:border-indigo-500 shadow-sm min-w-[160px]"
+                       >
                         <option value="ALL">All Hub Status</option>
                         <option value="ACTIVE">Active Node</option>
                         <option value="PENDING_APPROVAL">Pending Approval</option>
@@ -234,6 +244,7 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
 
                     <button 
                       onClick={() => setShowDuesOnly(!showDuesOnly)}
+                      aria-pressed={showDuesOnly}
                       className={`px-6 rounded-xl text-[10px] font-black uppercase tracking-widest border flex items-center gap-2 transition-all shadow-sm ${
                         showDuesOnly 
                         ? 'bg-red-50 dark:bg-red-900/20 text-red-600 border-red-200 dark:border-red-800' 
@@ -246,26 +257,30 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
               </div>
               
               <div className="overflow-x-auto">
-                <table className="w-full text-left">
+                <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest bg-slate-50/50 dark:bg-slate-800/20 border-b border-slate-100 dark:border-slate-800">
-                      <th className="px-6 py-4 w-12 text-center">
-                        <button onClick={handleSelectAll} className="text-slate-400 hover:text-indigo-600">
+                      <th scope="col" className="px-6 py-4 w-12 text-center">
+                        <button onClick={handleSelectAll} className="text-slate-400 hover:text-indigo-600" aria-label={selectedVendorIds.size === filteredVendors.length ? "Deselect all vendors" : "Select all vendors"}>
                           {selectedVendorIds.size === filteredVendors.length && filteredVendors.length > 0 ? <CheckSquare size={18} /> : <Square size={18} />}
                         </button>
                       </th>
-                      <th className="px-6 py-4 cursor-pointer" onClick={() => setSortConfig({key: 'name', direction: sortConfig.direction === 'asc' ? 'desc' : 'asc'})}>Entity <ArrowUpDown size={10} className="inline ml-1"/></th>
-                      <th className="px-6 py-4">Classification</th>
-                      <th className="px-6 py-4">Node Status</th>
-                      <th className="px-6 py-4 text-right" onClick={() => setSortConfig({key: 'dues', direction: sortConfig.direction === 'asc' ? 'desc' : 'asc'})}>Total Dues <ArrowUpDown size={10} className="inline ml-1"/></th>
-                      <th className="px-6 py-4 text-right">Ops</th>
+                      <th scope="col" className="px-6 py-4 cursor-pointer" onClick={() => setSortConfig({key: 'name', direction: sortConfig.direction === 'asc' ? 'desc' : 'asc'})}>Entity <ArrowUpDown size={10} className="inline ml-1"/></th>
+                      <th scope="col" className="px-6 py-4">Classification</th>
+                      <th scope="col" className="px-6 py-4">Node Status</th>
+                      <th scope="col" className="px-6 py-4 text-right" onClick={() => setSortConfig({key: 'dues', direction: sortConfig.direction === 'asc' ? 'desc' : 'asc'})}>Total Dues <ArrowUpDown size={10} className="inline ml-1"/></th>
+                      <th scope="col" className="px-6 py-4 text-right">Ops</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
                     {filteredVendors.map(vendor => (
                       <tr key={vendor.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors group">
                         <td className="px-6 py-4 text-center">
-                          <button onClick={() => handleSelectOne(vendor.id)} className={`${selectedVendorIds.has(vendor.id) ? 'text-indigo-600' : 'text-slate-300 hover:text-slate-500'}`}>
+                          <button 
+                            onClick={() => handleSelectOne(vendor.id)} 
+                            className={`${selectedVendorIds.has(vendor.id) ? 'text-indigo-600' : 'text-slate-300 hover:text-slate-500'}`}
+                            aria-label={`Select vendor ${vendor.name}`}
+                          >
                             {selectedVendorIds.has(vendor.id) ? <CheckSquare size={18} /> : <Square size={18} />}
                           </button>
                         </td>
@@ -300,7 +315,7 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
                           </div>
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <button className="text-slate-400 hover:text-indigo-600 p-2"><MoreHorizontal size={18} /></button>
+                          <button className="text-slate-400 hover:text-indigo-600 p-2" aria-label="More options"><MoreHorizontal size={18} /></button>
                         </td>
                       </tr>
                     ))}
@@ -314,7 +329,7 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
       {/* Bulk Action Confirmation Modal */}
       {showBulkConfirm && (
         <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[300] flex items-center justify-center p-4">
-           <Card className="w-full max-w-md rounded-[40px] p-10 bg-white dark:bg-slate-900 border-none shadow-2xl relative overflow-hidden">
+           <Card className="w-full max-w-md rounded-[40px] p-10 bg-white dark:bg-slate-900 border-none shadow-2xl relative overflow-hidden" role="dialog" aria-labelledby="bulk-confirm-title">
               <div className={`absolute top-0 left-0 w-full h-1.5 ${bulkAction === 'ACTIVATE' ? 'bg-emerald-500' : 'bg-red-500'}`}></div>
               <div className="text-center">
                  <div className={`w-20 h-20 rounded-[28px] flex items-center justify-center mx-auto mb-6 shadow-xl ${
@@ -322,7 +337,7 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
                  }`}>
                     {bulkAction === 'ACTIVATE' ? <UserCheck size={40}/> : <Ban size={40}/>}
                  </div>
-                 <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">Confirm Bulk Hub Sync</h3>
+                 <h3 id="bulk-confirm-title" className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">Confirm Bulk Hub Sync</h3>
                  <p className="text-slate-500 dark:text-slate-400 font-medium mb-8">
                     You are about to <strong className={bulkAction === 'ACTIVATE' ? 'text-emerald-600' : 'text-red-600'}>{bulkAction?.toLowerCase()}</strong> {selectedVendorIds.size} vendor node{selectedVendorIds.size > 1 ? 's' : ''}. This will affect their trading status across the regional hub instantly.
                  </p>
@@ -345,8 +360,8 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
       {/* Vendor Detail Sidebar */}
       {viewingVendor && (
         <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[200] flex items-center justify-end animate-slide-left">
-          <div className="w-full max-w-xl h-full bg-white dark:bg-slate-900 shadow-2xl overflow-y-auto p-10 border-l border-slate-100 dark:border-slate-800 relative">
-            <button onClick={() => setViewingVendor(null)} className="absolute top-8 right-8 p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-red-50 hover:text-red-500 transition-colors">
+          <div className="w-full max-w-xl h-full bg-white dark:bg-slate-900 shadow-2xl overflow-y-auto p-10 border-l border-slate-100 dark:border-slate-800 relative" role="dialog" aria-label="Vendor Details">
+            <button onClick={() => setViewingVendor(null)} className="absolute top-8 right-8 p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-red-50 hover:text-red-500 transition-colors" aria-label="Close sidebar">
               <X size={24} />
             </button>
 
