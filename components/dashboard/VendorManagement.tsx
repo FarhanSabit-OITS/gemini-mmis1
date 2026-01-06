@@ -9,7 +9,7 @@ import {
   ArrowUpDown, Filter, Ban, Banknote, XCircle, Package,
   Plus, Edit, Trash2, Image as ImageIcon, Upload, LayoutGrid,
   ChevronLeft, ChevronRight, Zap, Star, ListFilter, Tag,
-  ChevronDown, AlertCircle, UserCheck, FileCheck
+  ChevronDown, AlertCircle, UserCheck, FileCheck, Eye, SearchCode
 } from 'lucide-react';
 import { GoogleGenAI } from '@google/genai';
 import { z } from 'zod';
@@ -53,6 +53,7 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
     { id: 'V-002', name: 'Fresh Foods Co.', email: 'orders@freshfoods.ug', category: 'Groceries', status: 'PENDING_APPROVAL', kycStatus: 'PENDING', products: 45, joinedDate: '2024-01-20', gender: 'FEMALE', age: 29, city: 'Jinja', market: 'Jinja Main', rentDue: 150000, vatDue: 25000 },
     { id: 'V-003', name: 'Mukasa General Trade', email: 'mukasa@trade.ug', category: 'General', status: 'INACTIVE', kycStatus: 'REJECTED', products: 12, joinedDate: '2024-03-05', gender: 'MALE', age: 45, city: 'Mbarara', market: 'Mbarara Central', rentDue: 300000, vatDue: 50000 },
     { id: 'V-004', name: 'City Shoppers', email: 'shop@city.ug', category: 'Clothing', status: 'UNDER_REVIEW', kycStatus: 'APPROVED', products: 89, joinedDate: '2023-08-15', gender: 'FEMALE', age: 27, city: 'Kampala', market: 'Nakasero Market', rentDue: 0, vatDue: 0 },
+    { id: 'V-005', name: 'Elite Hardware', email: 'elite@hardware.ug', category: 'Hardware', status: 'PENDING_APPROVAL', kycStatus: 'SUBMITTED', products: 32, joinedDate: '2024-05-10', gender: 'MALE', age: 31, city: 'Gulu', market: 'Gulu Main', rentDue: 75000, vatDue: 12000 },
   ]);
   
   // Bulk Action State
@@ -224,7 +225,8 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
                        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl pl-11 pr-10 py-3 text-[10px] font-black uppercase tracking-widest outline-none appearance-none cursor-pointer focus:border-indigo-500 shadow-sm min-w-[160px]">
                         <option value="ALL">All Hub Status</option>
                         <option value="ACTIVE">Active Node</option>
-                        <option value="PENDING_APPROVAL">Pending</option>
+                        <option value="PENDING_APPROVAL">Pending Approval</option>
+                        <option value="UNDER_REVIEW">Under Review</option>
                         <option value="INACTIVE">Inactive</option>
                       </select>
                       <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none" size={14} />
@@ -255,7 +257,7 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
                       <th className="px-6 py-4 cursor-pointer" onClick={() => setSortConfig({key: 'name', direction: sortConfig.direction === 'asc' ? 'desc' : 'asc'})}>Entity <ArrowUpDown size={10} className="inline ml-1"/></th>
                       <th className="px-6 py-4">Classification</th>
                       <th className="px-6 py-4">Node Status</th>
-                      <th className="px-6 py-4 text-right" onClick={() => setSortConfig({key: 'dues', direction: sortConfig.direction === 'asc' ? 'desc' : 'asc'})}>Dues <ArrowUpDown size={10} className="inline ml-1"/></th>
+                      <th className="px-6 py-4 text-right" onClick={() => setSortConfig({key: 'dues', direction: sortConfig.direction === 'asc' ? 'desc' : 'asc'})}>Total Dues <ArrowUpDown size={10} className="inline ml-1"/></th>
                       <th className="px-6 py-4 text-right">Ops</th>
                     </tr>
                   </thead>
@@ -281,17 +283,21 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
                           <span className={`px-2.5 py-1 rounded-full text-[8px] font-black uppercase border flex items-center justify-center gap-1.5 w-fit ${
                             vendor.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
                             vendor.status === 'PENDING_APPROVAL' ? 'bg-amber-50 text-amber-600 border-amber-200' :
+                            vendor.status === 'UNDER_REVIEW' ? 'bg-indigo-50 text-indigo-600 border-indigo-200' :
                             'bg-red-50 text-red-600 border-red-200'
                           }`}>
                             {vendor.status.replace('_', ' ')}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-right font-black text-xs">
-                          {vendor.rentDue + vendor.vatDue > 0 ? (
-                            <span className="text-red-600">UGX {(vendor.rentDue + vendor.vatDue).toLocaleString()}</span>
-                          ) : (
-                            <span className="text-emerald-600 flex items-center justify-end gap-1"><CheckCircle2 size={12}/> Settled</span>
-                          )}
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex flex-col items-end">
+                            <span className={`font-black text-xs ${vendor.rentDue + vendor.vatDue > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                              UGX {(vendor.rentDue + vendor.vatDue).toLocaleString()}
+                            </span>
+                            {vendor.rentDue + vendor.vatDue > 0 && (
+                               <span className="text-[8px] font-black uppercase text-red-400 tracking-tighter">Outstanding Balance</span>
+                            )}
+                          </div>
                         </td>
                         <td className="px-6 py-4 text-right">
                           <button className="text-slate-400 hover:text-indigo-600 p-2"><MoreHorizontal size={18} /></button>
