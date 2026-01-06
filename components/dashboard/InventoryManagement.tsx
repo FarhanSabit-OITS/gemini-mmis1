@@ -1,11 +1,11 @@
+
 import React, { useState, useMemo } from 'react';
 import { 
   Package, Search, Filter, Plus, Edit, Trash2, AlertCircle, ShoppingBag, 
   Send, CheckCircle, X, Save, Info, User, Tag, DollarSign, Boxes, 
   Warehouse, ShieldCheck, ChevronDown, ArrowRight, Eye, LayoutGrid, Zap,
   TrendingUp, BarChart3, ListFilter, ClipboardCheck, Star, Sparkles,
-  ArrowDownLeft, ArrowUpRight, History, Settings, MoreHorizontal, Clock, Activity,
-  Download, RefreshCw
+  ArrowDownLeft, ArrowUpRight, History, Settings
 } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, 
@@ -24,19 +24,9 @@ export const InventoryManagement = ({ user }: { user: UserProfile }) => {
     { id: 'PRD-4453', name: 'Cooking Oil (20L)', description: 'Pure vegetable oil, cholesterol-free.', vendor: 'Global Mart', stock: 5, price: 120000, status: 'CRITICAL', category: 'Household' },
   ]);
 
-  const [logs] = useState<StockLog[]>([
-    { id: 'LOG-001', itemName: 'Basmati Rice', quantity: 50, unit: 'Bags', vendor: 'Fresh Foods Ltd', type: 'INBOUND', timestamp: '2024-05-18 10:15', inspector: 'Gate Delta', status: 'VERIFIED', notes: 'Quality verified at hub gate.' },
-    { id: 'LOG-002', itemName: 'Cooking Oil', quantity: 5, unit: 'Jerricans', vendor: 'Global Mart', type: 'OUTBOUND', timestamp: '2024-05-18 11:20', inspector: 'Terminal #4', status: 'VERIFIED' },
-    { id: 'LOG-003', itemName: 'Solar Lantern X1', quantity: 200, unit: 'Units', vendor: 'Global Tech', type: 'ADJUSTMENT', timestamp: '2024-05-18 14:45', inspector: 'System Audit', status: 'SYNCED', notes: 'Inventory correction after cycle count.' },
-    { id: 'LOG-004', itemName: 'Refined Sugar', quantity: 10, unit: 'Bags', vendor: 'Fresh Foods Ltd', type: 'INBOUND', timestamp: '2024-05-17 09:30', inspector: 'Gate Delta', status: 'FLAGGED', notes: 'Dampness detected in packaging.' },
-  ]);
-
   const [search, setSearch] = useState('');
-  const [filterCategory, setFilterCategory] = useState('ALL');
-  const [filterStatus, setFilterStatus] = useState('ALL');
-  const [filterStockLevel, setFilterStockLevel] = useState('ALL');
-  
   const [showFormModal, setShowFormModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   
   const [form, setForm] = useState({
@@ -44,28 +34,17 @@ export const InventoryManagement = ({ user }: { user: UserProfile }) => {
     description: '',
     price: '',
     stock: '',
-    category: 'Food'
+    category: 'General'
   });
 
   const [showRestockModal, setShowRestockModal] = useState(false);
 
-  const categories = useMemo(() => Array.from(new Set(items.map(i => i.category))), [items]);
-
   const filteredItems = useMemo(() => {
-    return items.filter(item => {
-      const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase()) || 
-                           item.id.toLowerCase().includes(search.toLowerCase());
-      const matchesCategory = filterCategory === 'ALL' || item.category === filterCategory;
-      const matchesStatus = filterStatus === 'ALL' || item.status === filterStatus;
-      
-      let matchesStockLevel = true;
-      if (filterStockLevel === 'LOW') matchesStockLevel = item.status === 'LOW';
-      if (filterStockLevel === 'CRITICAL') matchesStockLevel = item.status === 'CRITICAL';
-      if (filterStockLevel === 'HEALTHY') matchesStockLevel = item.status === 'HEALTHY';
-
-      return matchesSearch && matchesCategory && matchesStatus && matchesStockLevel;
-    });
-  }, [items, search, filterCategory, filterStatus, filterStockLevel]);
+    return items.filter(item => 
+      item.name.toLowerCase().includes(search.toLowerCase()) || 
+      item.category.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [items, search]);
 
   const toggleFeatured = (id: string) => {
     setItems(items.map(item => item.id === id ? { ...item, isFeatured: !item.isFeatured } : item));
@@ -80,7 +59,7 @@ export const InventoryManagement = ({ user }: { user: UserProfile }) => {
     if (editingProduct) {
       setItems(items.map(item => item.id === editingProduct.id ? { ...item, ...form, price: Number(form.price), stock: newStock, status } : item));
     } else {
-      setItems([{ id: 'PRD-'+Math.random().toString(36).substr(2,4).toUpperCase(), vendor: user.name, ...form, price: Number(form.price), stock: newStock, status, images: [] }, ...items]);
+      setItems([{ id: 'PRD-'+Math.random().toString(36).substr(2,4).toUpperCase(), vendor: user.name, ...form, price: Number(form.price), stock: newStock, status }, ...items]);
     }
     setShowFormModal(false);
   };
@@ -94,53 +73,40 @@ export const InventoryManagement = ({ user }: { user: UserProfile }) => {
            </div>
            <div>
               <h2 className="text-3xl font-black text-slate-900 tracking-tight uppercase">Stock Ledger</h2>
-              <p className="text-slate-500 font-medium text-lg">Centralized inventory triangulation node.</p>
+              <p className="text-slate-50 font-medium text-lg bg-black px-3 py-1 rounded-xl">Terminal: ALPHA-SYNC</p>
            </div>
         </div>
         <div className="flex gap-3">
            <Button variant="secondary" onClick={() => setShowRestockModal(true)} className="h-14 px-8 font-black uppercase text-xs tracking-widest border-2">
-             <ArrowUpRight size={18}/> Inbound Requisition
+             <ArrowUpRight size={18}/> Product Request
            </Button>
-           <Button onClick={() => { setEditingProduct(null); setShowFormModal(true); }} className="shadow-2xl shadow-indigo-200 h-14 px-8 font-black uppercase tracking-widest text-xs bg-indigo-600 text-white border-none">
+           <Button onClick={() => { setEditingProduct(null); setShowFormModal(true); }} className="shadow-2xl shadow-indigo-200 h-14 px-8 font-black uppercase tracking-widest text-xs">
               <Plus size={20} /> Register SKU
            </Button>
         </div>
       </div>
 
-      <div className="flex gap-2 bg-slate-100 p-2 rounded-2xl w-fit border border-slate-200/50 shadow-inner">
-        <button onClick={() => setActiveTab('REGISTRY')} className={`px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'REGISTRY' ? 'bg-indigo-600 text-white shadow-xl' : 'text-slate-500 hover:text-indigo-600'}`}>Central Ledger</button>
-        <button onClick={() => setActiveTab('CMS')} className={`px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'CMS' ? 'bg-indigo-600 text-white shadow-xl' : 'text-slate-500 hover:text-indigo-600'}`}>Shop Showcase</button>
-        <button onClick={() => setActiveTab('LOGS')} className={`px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'LOGS' ? 'bg-indigo-600 text-white shadow-xl' : 'text-slate-500 hover:text-indigo-600'}`}>Operational Log</button>
+      <div className="flex gap-2 bg-slate-100 p-2 rounded-2xl w-fit">
+        <button onClick={() => setActiveTab('REGISTRY')} className={`px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'REGISTRY' ? 'bg-indigo-600 text-white shadow-xl' : 'text-slate-500 hover:bg-white'}`}>Central Ledger</button>
+        <button onClick={() => setActiveTab('CMS')} className={`px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'CMS' ? 'bg-indigo-600 text-white shadow-xl' : 'text-slate-500 hover:bg-white'}`}>Shop CMS</button>
+        <button onClick={() => setActiveTab('LOGS')} className={`px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'LOGS' ? 'bg-indigo-600 text-white shadow-xl' : 'text-slate-500 hover:bg-white'}`}>Stock Log</button>
       </div>
 
       {activeTab === 'REGISTRY' && (
         <div className="space-y-6">
-           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="md:col-span-2">
                  <Input icon={Search} placeholder="Search by SKU, Name, or Node..." value={search} onChange={(e:any)=>setSearch(e.target.value)} />
               </div>
-              <div className="relative">
-                <select value={filterCategory} onChange={(e)=>setFilterCategory(e.target.value)} className="w-full h-full bg-black text-white border-2 border-slate-800 rounded-2xl px-5 py-3.5 text-[10px] font-black uppercase tracking-widest outline-none appearance-none cursor-pointer">
-                  <option value="ALL">All Categories</option>
-                  {categories.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500" size={16}/>
-              </div>
-              <div className="relative">
-                <select value={filterStatus} onChange={(e)=>setFilterStatus(e.target.value)} className="w-full h-full bg-black text-white border-2 border-slate-800 rounded-2xl px-5 py-3.5 text-[10px] font-black uppercase tracking-widest outline-none appearance-none cursor-pointer">
-                  <option value="ALL">All Statuses</option>
-                  <option value="HEALTHY">Healthy</option>
-                  <option value="LOW">Low Stock</option>
-                  <option value="CRITICAL">Critical</option>
-                </select>
-                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500" size={16}/>
-              </div>
-              <Button variant="secondary" className="h-full border-2 text-[10px] font-black uppercase tracking-widest">
-                <Download size={18}/> Export CSV
-              </Button>
+              <select className="bg-black text-white border-2 border-slate-800 rounded-2xl px-5 py-3.5 text-xs font-black uppercase tracking-widest outline-none focus:border-indigo-600 shadow-xl">
+                 <option>Filter Category: All</option>
+                 <option>Produce & Grain</option>
+                 <option>Electronics</option>
+              </select>
+              <Button variant="secondary" className="h-12 font-black uppercase text-[10px] tracking-widest border-2">Export Ledger</Button>
            </div>
 
-           <Card className="p-0 overflow-hidden rounded-[32px] shadow-2xl border-none bg-white">
+           <Card className="p-0 overflow-hidden rounded-[32px] shadow-2xl border-none">
               <div className="overflow-x-auto">
                  <table className="w-full text-left">
                     <thead>
@@ -148,8 +114,8 @@ export const InventoryManagement = ({ user }: { user: UserProfile }) => {
                           <th className="px-8 py-5">Commodity SKU</th>
                           <th className="px-8 py-5">Node Health</th>
                           <th className="px-8 py-5 text-center">Featured</th>
-                          <th className="px-8 py-5 text-right">Unit Price</th>
-                          <th className="px-8 py-5 text-right">Operations</th>
+                          <th className="px-8 py-5 text-right">Valuation</th>
+                          <th className="px-8 py-5 text-right">Ops</th>
                        </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
@@ -162,18 +128,18 @@ export const InventoryManagement = ({ user }: { user: UserProfile }) => {
                                    </div>
                                    <div>
                                       <p className="text-sm font-black text-slate-900 tracking-tight">{item.name}</p>
-                                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{item.id} • {item.category}</p>
+                                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{item.id}</p>
                                    </div>
                                 </div>
                              </td>
                              <td className="px-8 py-6">
                                 <div className="flex flex-col gap-1.5">
                                    <div className="flex justify-between text-[8px] font-black uppercase tracking-widest">
-                                      <span className={item.status === 'HEALTHY' ? 'text-emerald-600' : item.status === 'CRITICAL' ? 'text-red-600 font-black animate-pulse' : 'text-amber-600'}>{item.status}</span>
-                                      <span className="text-slate-400">{item.stock} Units Registry</span>
+                                      <span className={item.status === 'HEALTHY' ? 'text-emerald-600' : 'text-red-500'}>{item.status}</span>
+                                      <span className="text-slate-400">{item.stock} Units</span>
                                    </div>
                                    <div className="w-32 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                      <div className={`h-full transition-all duration-1000 ${item.status === 'HEALTHY' ? 'bg-emerald-500' : item.status === 'CRITICAL' ? 'bg-red-500' : 'bg-amber-500'}`} style={{width: `${Math.min((item.stock / 200) * 100, 100)}%`}}></div>
+                                      <div className={`h-full transition-all duration-1000 ${item.status === 'HEALTHY' ? 'bg-emerald-500' : 'bg-red-500'}`} style={{width: `${Math.min(item.stock/2, 100)}%`}}></div>
                                    </div>
                                 </div>
                              </td>
@@ -186,10 +152,7 @@ export const InventoryManagement = ({ user }: { user: UserProfile }) => {
                                 UGX {item.price.toLocaleString()}
                              </td>
                              <td className="px-8 py-6 text-right">
-                                <div className="flex justify-end gap-2">
-                                  <button className="p-2 text-slate-400 hover:text-indigo-600 transition-colors rounded-lg hover:bg-indigo-50"><Edit size={18}/></button>
-                                  <button className="p-2 text-slate-400 hover:text-red-600 transition-colors rounded-lg hover:bg-red-50"><Trash2 size={18}/></button>
-                                </div>
+                                <button className="p-2 text-slate-400 hover:text-indigo-600 transition-colors"><Edit size={18}/></button>
                              </td>
                           </tr>
                        ))}
@@ -200,94 +163,117 @@ export const InventoryManagement = ({ user }: { user: UserProfile }) => {
         </div>
       )}
 
-      {activeTab === 'LOGS' && (
-        <div className="space-y-6 animate-fade-in">
-           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <Card className="p-8 rounded-[40px] shadow-xl flex items-center gap-6 group hover:border-indigo-200 transition-all bg-white border-slate-100">
-                 <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform"><Activity size={28}/></div>
-                 <div><p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Weekly Cycles</p><p className="text-3xl font-black text-slate-900 tracking-tighter">1,245</p></div>
-              </Card>
-              <Card className="p-8 rounded-[40px] shadow-xl flex items-center gap-6 group hover:border-emerald-200 transition-all bg-white border-slate-100">
-                 <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform"><CheckCircle size={28}/></div>
-                 <div><p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Integrity Sync</p><p className="text-3xl font-black text-slate-900 tracking-tighter">99.4%</p></div>
-              </Card>
-              <Card className="p-8 rounded-[40px] shadow-xl flex items-center gap-6 group hover:border-amber-200 transition-all bg-white border-slate-100">
-                 <div className="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform"><RefreshCw size={28}/></div>
-                 <div><p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Pending Audit</p><p className="text-3xl font-black text-slate-900 tracking-tighter">18</p></div>
-              </Card>
-              <Card className="p-8 rounded-[40px] shadow-xl flex items-center gap-6 group hover:border-red-200 transition-all bg-white border-slate-100">
-                 <div className="w-14 h-14 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform"><AlertCircle size={28}/></div>
-                 <div><p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Discrepancies</p><p className="text-3xl font-black text-slate-900 tracking-tighter">04</p></div>
-              </Card>
-           </div>
+      {activeTab === 'CMS' && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in">
+           <Card className="rounded-[48px] p-10 shadow-2xl border-none">
+              <div className="flex items-center justify-between mb-10">
+                 <h3 className="text-xl font-black uppercase tracking-tight flex items-center gap-3"><Sparkles className="text-indigo-600" /> Featured CMS Showcase</h3>
+                 <p className="text-[10px] font-black uppercase text-slate-400">Front-end Node Simulation</p>
+              </div>
+              <div className="grid grid-cols-1 gap-6">
+                 {items.filter(i => i.isFeatured).map(item => (
+                   <div key={item.id} className="bg-slate-900 text-white p-8 rounded-[40px] relative overflow-hidden group">
+                      <div className="relative z-10">
+                         <div className="flex justify-between items-start mb-6">
+                            <span className="bg-white/10 px-4 py-1.5 rounded-full text-[9px] font-black uppercase border border-white/10 tracking-[0.2em]">Live on Marketplace</span>
+                            <Star fill="currentColor" size={20} className="text-amber-400" />
+                         </div>
+                         <h4 className="text-3xl font-black tracking-tighter mb-2">{item.name}</h4>
+                         <p className="text-indigo-300 text-sm font-medium opacity-80 mb-8">{item.description}</p>
+                         <div className="flex items-center justify-between">
+                            <p className="text-2xl font-black tracking-tighter text-emerald-400">UGX {item.price.toLocaleString()}</p>
+                            <Button variant="secondary" className="!bg-white/10 !text-white border-none h-12 text-xs font-black uppercase px-6">Edit Landing</Button>
+                         </div>
+                      </div>
+                      <Package size={200} className="absolute -right-10 -bottom-10 opacity-5 text-white" />
+                   </div>
+                 ))}
+                 {items.filter(i => i.isFeatured).length === 0 && (
+                   <div className="py-20 text-center border-4 border-dashed border-slate-100 rounded-[40px]">
+                      <Star size={48} className="mx-auto mb-4 text-slate-200" />
+                      <p className="font-black uppercase text-xs text-slate-300">No Featured SKUs in CMS Hub.</p>
+                   </div>
+                 )}
+              </div>
+           </Card>
 
-           <Card className="p-0 overflow-hidden rounded-[40px] shadow-2xl border-none bg-white">
-              <div className="p-8 bg-slate-50 border-b border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4">
-                 <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-indigo-600 text-white rounded-2xl flex items-center justify-center shadow-lg"><History size={24}/></div>
-                    <div>
-                       <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">Stock Movement Registry</h3>
-                       <p className="text-xs text-slate-500 font-medium">End-to-end traceability of all inbound/outbound trade cycles.</p>
-                    </div>
+           <Card className="rounded-[48px] p-10 shadow-2xl border-none flex flex-col">
+              <h3 className="text-xl font-black uppercase tracking-tight mb-8">Category Performance</h3>
+              <div className="flex-1 min-h-[300px]">
+                 <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                       <Pie data={[{name:'Produce', value:60}, {name:'Electronics', value:15}, {name:'Clothing', value:25}]} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={8} dataKey="value">
+                          <Cell fill="#4f46e5" />
+                          <Cell fill="#8b5cf6" />
+                          <Cell fill="#10b981" />
+                       </Pie>
+                       <Tooltip />
+                    </PieChart>
+                 </ResponsiveContainer>
+              </div>
+              <div className="mt-8 pt-8 border-t border-slate-50 space-y-4">
+                 <div className="flex items-center justify-between text-xs font-black uppercase tracking-widest text-slate-500">
+                    <span>Total SKU Value</span>
+                    <span className="text-slate-900">UGX 14.5M</span>
                  </div>
-                 <Button variant="secondary" className="font-black text-[10px] uppercase h-10 px-6 border-slate-200">Generate Audit Report</Button>
-              </div>
-
-              <div className="overflow-x-auto">
-                 <table className="w-full text-left">
-                    <thead>
-                       <tr className="bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
-                          <th className="px-8 py-5">Event Identifier</th>
-                          <th className="px-8 py-5">Classification</th>
-                          <th className="px-8 py-5">Flow Quantity</th>
-                          <th className="px-8 py-5">Operator Hub</th>
-                          <th className="px-8 py-5 text-right">Integrity</th>
-                       </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-50">
-                       {logs.map(log => (
-                          <tr key={log.id} className="hover:bg-slate-50/50 transition-all group">
-                             <td className="px-8 py-6">
-                                <p className="text-sm font-black text-slate-900 font-mono tracking-tight">{log.id}</p>
-                                <p className="text-[9px] font-bold text-slate-400 uppercase mt-1 flex items-center gap-1"><Clock size={10}/> {log.timestamp}</p>
-                             </td>
-                             <td className="px-8 py-6">
-                                <div className="flex items-center gap-3">
-                                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                                      log.type === 'INBOUND' ? 'bg-emerald-50 text-emerald-600' : 
-                                      log.type === 'OUTBOUND' ? 'bg-indigo-50 text-indigo-600' : 'bg-amber-50 text-amber-600'
-                                   }`}>
-                                      {log.type === 'INBOUND' ? <ArrowDownLeft size={16}/> : log.type === 'OUTBOUND' ? <ArrowUpRight size={16}/> : <RefreshCw size={16}/>}
-                                   </div>
-                                   <div>
-                                      <p className="text-xs font-black text-slate-800 uppercase tracking-tighter">{log.type}</p>
-                                      <p className="text-[9px] font-bold text-slate-400">{log.itemName}</p>
-                                   </div>
-                                </div>
-                             </td>
-                             <td className="px-8 py-6">
-                                <p className="text-sm font-black text-slate-900">{log.quantity} <span className="text-[10px] text-slate-400 font-bold uppercase">{log.unit}</span></p>
-                             </td>
-                             <td className="px-8 py-6">
-                                <p className="text-xs font-bold text-slate-700">{log.vendor}</p>
-                                <p className="text-[9px] font-black uppercase text-indigo-500">{log.inspector}</p>
-                             </td>
-                             <td className="px-8 py-6 text-right">
-                                <span className={`px-3 py-1 rounded-full text-[8px] font-black uppercase border tracking-widest ${
-                                   log.status === 'VERIFIED' || log.status === 'SYNCED' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
-                                   log.status === 'FLAGGED' ? 'bg-red-50 text-red-600 border-red-100 animate-pulse' : 'bg-amber-50 text-amber-600 border-amber-100'
-                                }`}>{log.status}</span>
-                             </td>
-                          </tr>
-                       ))}
-                    </tbody>
-                 </table>
+                 <div className="flex items-center justify-between text-xs font-black uppercase tracking-widest text-slate-500">
+                    <span>Average Lifecycle</span>
+                    <span className="text-slate-900">18.4 Days</span>
+                 </div>
               </div>
            </Card>
         </div>
       )}
-      
-      {/* ... keeping CMS and Modals same as before ... */}
+
+      {showRestockModal && (
+        <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[200] flex items-center justify-center p-4">
+           <Card className="w-full max-w-xl rounded-[48px] p-12 bg-white relative overflow-hidden shadow-2xl border-none">
+              <div className="absolute top-0 left-0 w-full h-2 bg-indigo-600"></div>
+              <div className="flex justify-between items-center mb-10">
+                 <h3 className="text-3xl font-black text-slate-900 tracking-tight uppercase">Product Requisition</h3>
+                 <button onClick={() => setShowRestockModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors"><X size={32}/></button>
+              </div>
+              <div className="space-y-6">
+                 <Input label="Target Commodity SKU / Name *" placeholder="e.g. Basmati Rice" icon={Package} />
+                 <div className="grid grid-cols-2 gap-6">
+                    <Input label="Desired Quantity *" type="number" placeholder="0" icon={Boxes} />
+                    <Input label="Max Unit Price (UGX) *" type="number" placeholder="0.00" icon={DollarSign} />
+                 </div>
+                 <Input label="Technical Context" multiline placeholder="Specific grade, region, or moisture requirements..." />
+                 <Button className="w-full h-16 bg-indigo-600 border-none shadow-2xl shadow-indigo-100 font-black uppercase tracking-widest text-xs rounded-2xl">Broadcast RFQ to Network</Button>
+              </div>
+           </Card>
+        </div>
+      )}
+
+      {showFormModal && (
+        <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[200] flex items-center justify-center p-4">
+           <Card className="w-full max-w-xl rounded-[48px] p-12 bg-white relative overflow-hidden shadow-2xl border-none">
+              <div className="absolute top-0 left-0 w-full h-2 bg-indigo-600"></div>
+              <div className="flex justify-between items-center mb-10">
+                 <h3 className="text-3xl font-black text-slate-900 tracking-tight uppercase">{editingProduct ? 'Update SKU' : 'Initialize SKU'}</h3>
+                 <button onClick={() => setShowFormModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors"><X size={32}/></button>
+              </div>
+              <div className="space-y-6">
+                 <Input label="Official Designation *" value={form.name} onChange={(e:any)=>setForm({...form, name:e.target.value})} />
+                 <div className="grid grid-cols-2 gap-6">
+                    <Input label="Base Price (UGX) *" type="number" value={form.price} onChange={(e:any)=>setForm({...form, price:e.target.value})} />
+                    <Input label="Current Reserve *" type="number" value={form.stock} onChange={(e:any)=>setForm({...form, stock:e.target.value})} />
+                 </div>
+                 <div className="flex flex-col gap-1.5">
+                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Classification Segment</label>
+                    <select value={form.category} onChange={(e:any)=>setForm({...form, category:e.target.value})} className="bg-black text-white p-4 rounded-2xl font-black uppercase text-xs outline-none border-2 border-slate-800 shadow-xl appearance-none">
+                       <option>Food & Produce</option>
+                       <option>Electronics</option>
+                       <option>General Retail</option>
+                    </select>
+                 </div>
+                 <Input label="Product Description" multiline value={form.description} onChange={(e:any)=>setForm({...form, description:e.target.value})} />
+                 <Button onClick={handleSave} className="w-full h-16 bg-indigo-600 border-none shadow-2xl shadow-indigo-100 font-black uppercase tracking-widest text-xs rounded-2xl">Commit to Global Ledger</Button>
+              </div>
+           </Card>
+        </div>
+      )}
     </div>
   );
 };

@@ -108,9 +108,9 @@ export const MarketRegistry = ({ user }: { user: UserProfile }) => {
   };
 
   const OWNERSHIP_COLORS = {
-    PUBLIC: '#3b82f6',
-    PRIVATE: '#8b5cf6',
-    PPP: '#ec4899'
+    PUBLIC: '#3b82f6', // Blue
+    PRIVATE: '#8b5cf6', // Violet
+    PPP: '#ec4899' // Pink
   };
 
   const handleFetchGrounding = async (market: Market) => {
@@ -207,18 +207,18 @@ export const MarketRegistry = ({ user }: { user: UserProfile }) => {
           </div>
           <div className="md:col-span-4 grid grid-cols-2 gap-2">
             <div className="relative">
-               <label className="absolute -top-2 left-3 bg-white dark:bg-slate-900 px-1 text-[8px] font-black text-slate-400 uppercase z-10">From Year</label>
-               <input type="number" value={yearRange.start} onChange={(e)=>setYearRange({...yearRange, start: e.target.value})} className="w-full h-full bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl px-4 py-2 text-xs font-bold outline-none focus:border-indigo-600 transition-all dark:text-white"/>
+               <label className="absolute -top-2 left-3 bg-white px-1 text-[8px] font-black text-slate-400 uppercase z-10">From Year</label>
+               <input type="number" value={yearRange.start} onChange={(e)=>setYearRange({...yearRange, start: e.target.value})} className="w-full h-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-2 text-xs font-bold outline-none focus:border-indigo-600 transition-all"/>
             </div>
             <div className="relative">
-               <label className="absolute -top-2 left-3 bg-white dark:bg-slate-900 px-1 text-[8px] font-black text-slate-400 uppercase z-10">To Year</label>
-               <input type="number" value={yearRange.end} onChange={(e)=>setYearRange({...yearRange, end: e.target.value})} className="w-full h-full bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl px-4 py-2 text-xs font-bold outline-none focus:border-indigo-600 transition-all dark:text-white"/>
+               <label className="absolute -top-2 left-3 bg-white px-1 text-[8px] font-black text-slate-400 uppercase z-10">To Year</label>
+               <input type="number" value={yearRange.end} onChange={(e)=>setYearRange({...yearRange, end: e.target.value})} className="w-full h-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-2 text-xs font-bold outline-none focus:border-indigo-600 transition-all"/>
             </div>
           </div>
         </div>
         
         {!showAnalytics && (
-          <div className="flex gap-4 items-center bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+          <div className="flex gap-4 items-center bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
              <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Sort Manifest By:</span>
              <div className="flex gap-2">
                 {[
@@ -229,7 +229,7 @@ export const MarketRegistry = ({ user }: { user: UserProfile }) => {
                   <button 
                     key={s.k} 
                     onClick={() => handleSort(s.k as any)}
-                    className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === s.k ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                    className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === s.k ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'text-slate-500 hover:bg-slate-50'}`}
                   >
                     {s.l} {sortBy === s.k && (sortDirection === 'asc' ? <ArrowUpDown size={12} className="rotate-180"/> : <ArrowUpDown size={12}/>)}
                   </button>
@@ -242,9 +242,9 @@ export const MarketRegistry = ({ user }: { user: UserProfile }) => {
       {showAnalytics ? (
         <div className="grid grid-cols-1 gap-6 animate-fade-in">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <Card className="rounded-[32px] overflow-hidden shadow-2xl p-8 border-none bg-white dark:bg-slate-900 lg:col-span-1">
+            <Card className="rounded-[32px] overflow-hidden shadow-2xl p-8 border-none bg-white lg:col-span-1">
               <div className="flex items-center justify-between mb-8">
-                <h3 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight flex items-center gap-2">
+                <h3 className="text-xl font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
                   <TrendingUp size={24} className="text-indigo-600"/> Capacity Load
                 </h3>
               </div>
@@ -264,9 +264,9 @@ export const MarketRegistry = ({ user }: { user: UserProfile }) => {
               </div>
             </Card>
 
-            <Card className="rounded-[32px] overflow-hidden shadow-2xl p-8 border-none bg-white dark:bg-slate-900 lg:col-span-1">
+            <Card className="rounded-[32px] overflow-hidden shadow-2xl p-8 border-none bg-white lg:col-span-1">
               <div className="flex items-center justify-between mb-8">
-                <h3 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight flex items-center gap-2">
+                <h3 className="text-xl font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
                   <PieIcon size={24} className="text-indigo-600"/> Type Dist.
                 </h3>
               </div>
@@ -295,10 +295,10 @@ export const MarketRegistry = ({ user }: { user: UserProfile }) => {
               </div>
             </Card>
 
-            <Card className="rounded-[32px] overflow-hidden shadow-2xl p-8 border-none bg-white dark:bg-slate-900 lg:col-span-1">
+            <Card className="rounded-[32px] overflow-hidden shadow-2xl p-8 border-none bg-white lg:col-span-1">
               <div className="flex items-center justify-between mb-8">
-                <h3 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight flex items-center gap-2">
-                  <Landmark size={24} className="text-indigo-600"/> Ownership Dist.
+                <h3 className="text-xl font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
+                  <Landmark size={24} className="text-indigo-600"/> Ownership
                 </h3>
               </div>
               <div className="h-64 w-full">
@@ -309,70 +309,103 @@ export const MarketRegistry = ({ user }: { user: UserProfile }) => {
                       cx="50%"
                       cy="50%"
                       innerRadius={60}
-                      outerRadius={85}
-                      paddingAngle={8}
+                      outerRadius={80}
+                      paddingAngle={5}
                       dataKey="value"
-                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                     >
                       {ownershipDistributionData.map((entry, index) => (
-                        <Cell key={`cell-own-${index}`} fill={OWNERSHIP_COLORS[entry.name as keyof typeof OWNERSHIP_COLORS]} stroke="none" />
+                        <Cell key={`cell-${index}`} fill={OWNERSHIP_COLORS[entry.name as keyof typeof OWNERSHIP_COLORS]} />
                       ))}
                     </Pie>
                     <Tooltip 
-                       contentStyle={{ borderRadius: '24px', border: 'none', boxShadow: '0 15px 30px -5px rgb(0 0 0 / 0.15)', padding: '16px' }}
+                       contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 20px -5px rgb(0 0 0 / 0.1)' }}
                     />
-                    <Legend verticalAlign="bottom" height={36} iconSize={10} wrapperStyle={{fontSize: '11px', fontWeight: '900', textTransform: 'uppercase'}}/>
+                    <Legend verticalAlign="bottom" height={36} iconSize={8} wrapperStyle={{fontSize: '10px', fontWeight: 'bold'}}/>
                   </PieChart>
                 </ResponsiveContainer>
               </div>
             </Card>
           </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+             <Card className="rounded-[32px] p-8 border-none shadow-xl bg-white flex flex-col justify-between overflow-hidden relative group">
+                <div className="relative z-10 flex justify-between items-start">
+                   <div>
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Trading Quadrant Count</p>
+                      <p className="text-5xl font-black text-slate-900 tracking-tighter">{markets.length}</p>
+                   </div>
+                   <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 shadow-sm group-hover:scale-110 transition-transform">
+                      <LayoutGrid size={28}/>
+                   </div>
+                </div>
+                <div className="mt-8 pt-4 border-t border-slate-50 flex items-center gap-2 text-[10px] font-black text-emerald-600 uppercase tracking-widest relative z-10">
+                   <TrendingUp size={16}/> Unified Network Status: Active
+                </div>
+                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-indigo-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700"></div>
+             </Card>
+             
+             <Card className="rounded-[32px] p-8 border-none shadow-xl bg-white lg:col-span-2 relative overflow-hidden group">
+                <h3 className="text-xl font-black text-slate-800 uppercase tracking-tight mb-8">Infrastructure Hub Distribution</h3>
+                <div className="h-64 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={capacityData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id="colorCap" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.2}/>
+                          <stop offset="95%" stopColor="#4f46e5" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                      <XAxis dataKey="established" fontSize={10} tick={{fill: '#64748b'}} axisLine={false} tickLine={false} />
+                      <YAxis fontSize={10} tick={{fill: '#64748b'}} axisLine={false} tickLine={false} />
+                      <Tooltip 
+                        contentStyle={{ borderRadius: '24px', border: 'none', boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.15)', padding: '16px' }}
+                      />
+                      <Area type="monotone" dataKey="capacity" stroke="#4f46e5" strokeWidth={4} fillOpacity={1} fill="url(#colorCap)" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="absolute top-0 right-0 w-48 h-48 bg-slate-50 rounded-full -mr-24 -mt-24 opacity-50 group-hover:bg-indigo-50 transition-colors duration-700"></div>
+             </Card>
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {filtered.map(market => (
-            <Card key={market.id} className="relative group overflow-hidden border-2 border-transparent hover:border-indigo-100 dark:hover:border-indigo-900 transition-all shadow-xl rounded-[32px] p-8 bg-white dark:bg-slate-900">
+            <Card key={market.id} className="relative group overflow-hidden border-2 border-transparent hover:border-indigo-100 transition-all shadow-xl rounded-[32px] p-8 bg-white">
               <div className="flex justify-between items-start mb-6">
                 <div className="flex gap-4 items-center">
-                  <div className="w-16 h-16 bg-slate-900 dark:bg-slate-800 text-white rounded-2xl flex items-center justify-center shrink-0 shadow-lg group-hover:bg-indigo-600 transition-colors">
+                  <div className="w-16 h-16 bg-slate-900 text-white rounded-2xl flex items-center justify-center shrink-0 shadow-lg group-hover:bg-indigo-600 transition-colors">
                     <Building2 size={32} />
                   </div>
                   <div>
-                    <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">{market.name}</h3>
+                    <h3 className="text-xl font-black text-slate-900 tracking-tight">{market.name}</h3>
                     <div className="flex items-center gap-1.5 text-slate-500 text-xs font-bold mt-1">
                       <MapPin size={12} className="text-indigo-500" /> {market.city} Node
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-col items-end gap-2">
-                  <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm ${
-                    market.ownership === 'PUBLIC' ? 'bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-900/50' :
-                    market.ownership === 'PRIVATE' ? 'bg-purple-100 text-purple-700 border border-purple-200 dark:bg-purple-900/30 dark:text-purple-400 dark:border-purple-900/50' :
-                    'bg-emerald-100 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-900/50'
-                  }`}>
-                    {market.ownership}
-                  </span>
-                  <button 
-                    onClick={() => window.open(`https://www.google.com/maps/search/${encodeURIComponent(market.name + ' ' + market.city)}`, '_blank')}
-                    className="text-[10px] font-black uppercase text-indigo-600 hover:underline flex items-center gap-1"
-                  >
-                    <Navigation size={12}/> Get Directions
-                  </button>
-                </div>
+                <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm ${
+                  market.ownership === 'PUBLIC' ? 'bg-blue-100 text-blue-700 border border-blue-200' :
+                  market.ownership === 'PRIVATE' ? 'bg-purple-100 text-purple-700 border border-purple-200' :
+                  'bg-emerald-100 text-emerald-700 border border-emerald-200'
+                }`}>
+                  {market.ownership}
+                </span>
               </div>
 
-              <div className="grid grid-cols-2 gap-6 mb-8 border-y border-slate-50 dark:border-slate-800 py-6">
+              <div className="grid grid-cols-2 gap-6 mb-8 border-y border-slate-50 py-6">
                 <div className="space-y-1">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
                     <Briefcase size={12}/> Class
                   </p>
-                  <p className="text-sm font-black text-slate-800 dark:text-slate-200 tracking-tight">{market.type}</p>
+                  <p className="text-sm font-black text-slate-800 tracking-tight">{market.type}</p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
                     <Calendar size={12}/> Established
                   </p>
-                  <p className="text-sm font-black text-slate-800 dark:text-slate-200 tracking-tight">
+                  <p className="text-sm font-black text-slate-800 tracking-tight">
                     {new Date(market.establishedDate).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })}
                   </p>
                 </div>
@@ -380,68 +413,77 @@ export const MarketRegistry = ({ user }: { user: UserProfile }) => {
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
                     <Users size={12}/> Capacity
                   </p>
-                  <p className="text-sm font-black text-slate-800 dark:text-slate-200">{market.capacity.toLocaleString()} Units</p>
+                  <p className="text-sm font-black text-slate-800">{market.capacity.toLocaleString()} Units</p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
                     <Globe size={12}/> Primary Trade
                   </p>
-                  <p className="text-sm font-black text-slate-800 dark:text-slate-200 truncate">{market.primaryProducts.slice(0, 2).join(', ')}</p>
+                  <p className="text-sm font-black text-slate-800 truncate">{market.primaryProducts.slice(0, 2).join(', ')}</p>
                 </div>
               </div>
 
               <div className="flex gap-2">
                  <Button 
                    variant="secondary" 
-                   className="flex-1 text-[10px] font-black uppercase tracking-widest py-3 rounded-xl border-slate-200 dark:border-slate-800 shadow-sm"
+                   className="flex-1 text-[10px] font-black uppercase tracking-widest py-3 rounded-xl border-slate-200 shadow-sm"
                    onClick={() => handleFetchGrounding(market)}
                  >
                    <Navigation size={14}/> Location Intelligence
                  </Button>
-                 <Button variant="outline" className="flex-1 text-[10px] font-black uppercase tracking-widest py-3 rounded-xl border-2 dark:border-slate-700">
+                 <Button variant="outline" className="flex-1 text-[10px] font-black uppercase tracking-widest py-3 rounded-xl border-2">
                    View Node Dossier
                  </Button>
               </div>
             </Card>
           ))}
+          {filtered.length === 0 && (
+            <div className="lg:col-span-2 py-32 text-center bg-white rounded-[48px] border-2 border-dashed border-slate-100 shadow-inner">
+               <ShieldAlert size={64} className="mx-auto mb-4 opacity-10 text-slate-400"/>
+               <p className="font-black uppercase text-xs tracking-widest text-slate-400">No regional nodes triangulated in this timeframe.</p>
+               <Button onClick={() => { setSearch(''); setFilterType('ALL'); setFilterOwnership('ALL'); }} variant="ghost" className="mt-4 text-indigo-600 font-bold uppercase text-[10px]">Reset Logic Constraints</Button>
+            </div>
+          )}
         </div>
       )}
 
       {/* Location Grounding Modal */}
       {groundingMarket && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[500] flex items-center justify-center p-4 animate-fade-in">
-           <Card className="w-full max-w-2xl shadow-2xl border-none rounded-[48px] p-0 relative bg-white dark:bg-slate-900 overflow-hidden flex flex-col max-h-[90vh]">
+           <Card className="w-full max-w-2xl shadow-2xl border-none rounded-[48px] p-0 relative bg-white overflow-hidden flex flex-col max-h-[90vh]">
               <div className="absolute top-0 left-0 w-full h-2 bg-indigo-600"></div>
               <button onClick={() => setGroundingMarket(null)} className="absolute top-8 right-8 text-slate-400 hover:text-slate-600 p-2 z-10"><X size={32}/></button>
               
               <div className="p-12 overflow-y-auto custom-scrollbar">
                   <div className="flex gap-6 items-center mb-10">
-                      <div className="w-20 h-20 bg-slate-900 dark:bg-slate-800 text-white rounded-[32px] flex items-center justify-center text-3xl font-black shadow-2xl">
+                      <div className="w-20 h-20 bg-slate-900 text-white rounded-[32px] flex items-center justify-center text-3xl font-black shadow-2xl">
                         <MapIcon size={32} />
                       </div>
                       <div>
-                          <h3 className="text-3xl font-black tracking-tighter uppercase text-slate-900 dark:text-white">{groundingMarket.name}</h3>
+                          <h3 className="text-3xl font-black tracking-tighter uppercase text-slate-900">{groundingMarket.name}</h3>
                           <div className="flex gap-3 mt-1">
-                              <span className="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/50 flex items-center gap-1">
+                              <span className="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center gap-1">
                                 <Sparkles size={10}/> AI Grounded Data
                               </span>
-                              <span className="text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">{groundingMarket.city} Hub</span>
+                              <span className="text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest bg-slate-100 text-slate-500 border border-slate-200">{groundingMarket.city} Hub</span>
                           </div>
                       </div>
                   </div>
 
                   <div className="space-y-8">
-                      <div className="bg-slate-50 dark:bg-slate-800/50 rounded-[32px] p-8 border border-slate-100 dark:border-slate-800 relative overflow-hidden group">
+                      <div className="bg-slate-50 rounded-[32px] p-8 border border-slate-100 relative overflow-hidden group">
                           <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-black text-[10px] uppercase tracking-[0.2em]">
+                            <div className="flex items-center gap-2 text-indigo-600 font-black text-[10px] uppercase tracking-[0.2em]">
                               <Info size={16}/> Strategic Spatial Overview
                             </div>
-                            <Button 
-                              onClick={() => window.open(`https://www.google.com/maps/search/${encodeURIComponent(groundingMarket.name + ' ' + groundingMarket.city)}`, '_blank')}
-                              className="h-10 px-4 text-[9px] font-black uppercase bg-indigo-600 border-none text-white shadow-lg"
-                            >
-                              <Navigation size={12} className="mr-2"/> Get Directions
-                            </Button>
+                            {groundingData?.links && groundingData.links.length > 0 && (
+                              <Button 
+                                onClick={() => window.open(groundingData.links[0].uri, '_blank')}
+                                className="h-10 px-4 text-[9px] font-black uppercase bg-indigo-600 border-none text-white shadow-lg"
+                              >
+                                <Navigation size={12} className="mr-2"/> Get Directions
+                              </Button>
+                            )}
                           </div>
                           {loadingGrounding ? (
                             <div className="py-12 flex flex-col items-center justify-center text-slate-400 gap-4">
@@ -449,7 +491,7 @@ export const MarketRegistry = ({ user }: { user: UserProfile }) => {
                                <p className="text-xs font-bold animate-pulse">Triangulating Node via Google Maps Grounding...</p>
                             </div>
                           ) : (
-                            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium italic">
+                            <p className="text-sm text-slate-600 leading-relaxed font-medium italic">
                                {groundingData?.text}
                             </p>
                           )}
@@ -465,10 +507,10 @@ export const MarketRegistry = ({ user }: { user: UserProfile }) => {
                                    href={link.uri} 
                                    target="_blank" 
                                    rel="noopener noreferrer"
-                                   className="flex items-center justify-between p-4 bg-white dark:bg-slate-950 border-2 border-slate-100 dark:border-slate-800 rounded-2xl text-indigo-700 dark:text-indigo-400 hover:border-indigo-600 dark:hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all group"
+                                   className="flex items-center justify-between p-4 bg-white border-2 border-slate-100 rounded-2xl text-indigo-700 hover:border-indigo-600 hover:bg-indigo-50 transition-all group"
                                  >
                                     <div className="flex items-center gap-3">
-                                       <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/50 rounded-xl flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-600 group-hover:text-white transition-colors shadow-sm">
+                                       <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors shadow-sm">
                                           <Navigation size={20}/>
                                        </div>
                                        <span className="font-black text-sm uppercase tracking-tight">{link.title}</span>
@@ -479,7 +521,7 @@ export const MarketRegistry = ({ user }: { user: UserProfile }) => {
                             </div>
                           ) : (
                             !loadingGrounding && (
-                               <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-2xl border border-amber-100 dark:border-amber-900 text-amber-700 dark:text-amber-400 flex items-center gap-3 text-xs font-bold">
+                               <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 text-amber-700 flex items-center gap-3 text-xs font-bold">
                                   <ShieldAlert size={18}/> Navigation nodes temporarily unreachable.
                                </div>
                             )
@@ -487,8 +529,8 @@ export const MarketRegistry = ({ user }: { user: UserProfile }) => {
                       </div>
                   </div>
 
-                  <div className="mt-12 pt-8 border-t border-slate-50 dark:border-slate-800">
-                      <Button className="w-full h-14 uppercase font-black tracking-widest text-xs shadow-2xl bg-slate-900 dark:bg-indigo-600 text-white border-none rounded-2xl" onClick={() => setGroundingMarket(null)}>Close Intelligence Node</Button>
+                  <div className="mt-12 pt-8 border-t border-slate-50">
+                      <Button className="w-full h-14 uppercase font-black tracking-widest text-xs shadow-2xl bg-slate-900 text-white border-none rounded-2xl" onClick={() => setGroundingMarket(null)}>Close Intelligence Node</Button>
                   </div>
               </div>
            </Card>

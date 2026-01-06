@@ -23,42 +23,49 @@ interface SidebarProps {
 export const Sidebar = ({ user, activeTab, setActiveTab, isOpen, setIsOpen, onLogout }: SidebarProps) => {
   
   const canSee = (item: { name: string, roles?: Role[] }) => {
-    // 1. No roles restriction means everyone sees it
-    if (!item.roles) return true;
-
-    // 2. Direct Role Match
-    if (item.roles.includes(user.role)) return true;
-
-    // 3. Super Admin Universal Access
+    // 1. Super Admin sees everything
     if (user.role === 'SUPER_ADMIN') return true;
 
-    // 4. Hierarchy Check: If any permitted roles are supervised by the current user's role
-    const supervisedRoles = ROLES_HIERARCHY[user.role] || [];
-    const hasAccess = item.roles.some(permittedRole => supervisedRoles.includes(permittedRole));
+    // 2. Strict check for sensitive modules (No hierarchy inheritance allowed)
+    const strictModules = ['Admin Roles', 'Security Console', 'Audit Logs'];
+    if (strictModules.includes(item.name)) {
+      return item.roles?.includes(user.role);
+    }
+
+    // 3. Standard check with Role Hierarchy
+    if (!item.roles) return true;
     
-    return hasAccess;
+    // Check direct role
+    if (item.roles.includes(user.role)) return true;
+
+    // Check hierarchy (if my role includes the required role)
+    // Note: ROLES_HIERARCHY[MyRole] returns roles I supervise/contain.
+    // This logic depends on how roles are defined in the item. 
+    // Usually, we check if the User's Role is authorized.
+    // For this implementation, we stick to the explicit roles list for simplicity and security.
+    return false; 
   };
 
   const menuItems = [
     { name: 'Home', icon: LayoutDashboard },
     { name: 'My Wallet', icon: Wallet },
-    { name: 'Markets', icon: Building2, roles: ['MARKET_ADMIN'] as Role[] },
-    { name: 'Map View', icon: MapIcon, roles: ['VENDOR', 'SUPPLIER', 'COUNTER_STAFF'] as Role[] },
-    { name: user.role === 'VENDOR' ? 'My Store' : 'Vendors', icon: Store, roles: ['MARKET_ADMIN', 'VENDOR'] as Role[] },
-    { name: 'Orders', icon: ShoppingCart, roles: ['VENDOR', 'USER'] as Role[] },
-    { name: 'Suppliers Network', icon: HeartHandshake, roles: ['SUPPLIER', 'VENDOR', 'USER'] as Role[] },
-    { name: 'Supply Requisitions', icon: ShoppingBag, roles: ['SUPPLIER', 'VENDOR'] as Role[] },
-    { name: 'Inventory Control', icon: Box, roles: ['VENDOR', 'SUPPLIER'] as Role[] },
+    { name: 'Markets', icon: Building2, roles: ['SUPER_ADMIN', 'MARKET_ADMIN'] as Role[] },
+    { name: 'Map View', icon: MapIcon, roles: ['SUPER_ADMIN', 'MARKET_ADMIN', 'VENDOR', 'SUPPLIER'] as Role[] },
+    { name: user.role === 'VENDOR' ? 'My Store' : 'Vendors', icon: Store, roles: ['SUPER_ADMIN', 'MARKET_ADMIN', 'VENDOR'] as Role[] },
+    { name: 'Orders', icon: ShoppingCart, roles: ['SUPER_ADMIN', 'MARKET_ADMIN', 'VENDOR', 'USER'] as Role[] },
+    { name: 'Suppliers Network', icon: HeartHandshake, roles: ['SUPER_ADMIN', 'MARKET_ADMIN', 'VENDOR', 'SUPPLIER', 'USER'] as Role[] },
+    { name: 'Supply Requisitions', icon: ShoppingBag, roles: ['SUPER_ADMIN', 'MARKET_ADMIN', 'VENDOR', 'SUPPLIER'] as Role[] },
+    { name: 'Inventory Control', icon: Box, roles: ['SUPER_ADMIN', 'MARKET_ADMIN', 'VENDOR', 'SUPPLIER'] as Role[] },
     // Restricted Modules
-    { name: 'Admin Roles', icon: Lock, roles: ['MARKET_ADMIN'] as Role[] },
-    { name: 'Security Console', icon: Shield, roles: ['MARKET_ADMIN'] as Role[] },
+    { name: 'Admin Roles', icon: Lock, roles: ['SUPER_ADMIN', 'MARKET_ADMIN'] as Role[] },
+    { name: 'Security Console', icon: Shield, roles: ['SUPER_ADMIN', 'MARKET_ADMIN'] as Role[] },
     
-    { name: 'Revenue Module', icon: Landmark, roles: ['MARKET_ADMIN'] as Role[] },
-    { name: 'Gate Management', icon: Truck, roles: ['COUNTER_STAFF'] as Role[] },
-    { name: 'Stock Counter', icon: Boxes, roles: ['COUNTER_STAFF'] as Role[] },
+    { name: 'Revenue Module', icon: Landmark, roles: ['SUPER_ADMIN', 'MARKET_ADMIN'] as Role[] },
+    { name: 'Gate Management', icon: Truck, roles: ['SUPER_ADMIN', 'MARKET_ADMIN', 'COUNTER_STAFF'] as Role[] },
+    { name: 'Stock Counter', icon: Boxes, roles: ['SUPER_ADMIN', 'MARKET_ADMIN', 'COUNTER_STAFF'] as Role[] },
     { name: 'QR & Receipts', icon: Ticket, roles: ['COUNTER_STAFF', 'VENDOR'] as Role[] },
     { name: 'Tickets & Support', icon: LifeBuoy },
-    { name: 'Audit Logs', icon: History, roles: ['MARKET_ADMIN'] as Role[] },
+    { name: 'Audit Logs', icon: History, roles: ['SUPER_ADMIN', 'MARKET_ADMIN'] as Role[] },
     { name: 'Settings', icon: Settings },
   ].filter(item => canSee(item));
 

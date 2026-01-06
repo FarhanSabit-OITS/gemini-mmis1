@@ -1,5 +1,6 @@
+
 import React, { useEffect, useState, useMemo } from 'react';
-import { Package, Store, Users, TrendingUp, ArrowRight, Plus, ShieldCheck, DollarSign, Clock, AlertCircle, CheckCircle, BarChart3, LineChart, PieChart, RefreshCw } from 'lucide-react';
+import { Package, Store, Users, TrendingUp, ArrowRight, Plus, ShieldCheck, DollarSign, Clock, AlertCircle, CheckCircle, BarChart3, LineChart, PieChart } from 'lucide-react';
 import { GoogleGenAI } from '@google/genai';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, 
@@ -13,33 +14,23 @@ import { PaymentGateway } from '../payments/PaymentGateway';
 export const Home = ({ user }: { user: UserProfile }) => {
   const [insights, setInsights] = useState<string>('');
   const [loadingInsights, setLoadingInsights] = useState(false);
-  const [errorInsights, setErrorInsights] = useState<string | null>(null);
   const [showPayment, setShowPayment] = useState(false);
 
-  const fetchInsights = async () => {
-    setLoadingInsights(true);
-    setErrorInsights(null);
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: `Provide a professional 2-sentence market trend analysis for a user with the role ${user.role} in a multi-vendor ecommerce system. Focus on BI and performance.`,
-      });
-      if (response.text) {
-        setInsights(response.text);
-      } else {
-        throw new Error('Malformed AI response signal.');
-      }
-    } catch (e: any) {
-      console.error('AI Insights Error:', e);
-      setErrorInsights(e.message || 'Node connectivity failure.');
-      setInsights('Operational intelligence indicates stability across regional hub quadrants. Network latency minimal.');
-    } finally {
-      setLoadingInsights(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchInsights = async () => {
+      setLoadingInsights(true);
+      try {
+        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const response = await ai.models.generateContent({
+          model: 'gemini-3-flash-preview',
+          contents: `Provide a professional 2-sentence market trend analysis for a user with the role ${user.role} in a multi-vendor ecommerce system. Focus on BI and performance.`,
+        });
+        setInsights(response.text || 'Welcome back! Performance metrics show a steady upward trend in regional hubs.');
+      } catch (e) {
+        setInsights('Welcome back! Market analytics indicate stability in core commercial sectors.');
+      }
+      setLoadingInsights(false);
+    };
     fetchInsights();
   }, [user.role]);
 
@@ -78,19 +69,10 @@ export const Home = ({ user }: { user: UserProfile }) => {
           <div className="flex items-center gap-2 mb-4">
              <span className="bg-white/20 text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-full border border-white/10">BI Console</span>
              <span className="bg-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-full border border-emerald-500/20">Active</span>
-             {errorInsights && (
-               <button onClick={fetchInsights} className="bg-red-500/20 text-red-300 text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-full border border-red-500/20 flex items-center gap-1 hover:bg-red-500/30 transition-all">
-                 <AlertCircle size={10}/> Sync Degraded - Retry
-               </button>
-             )}
           </div>
           <h2 className="text-3xl font-black mb-2 tracking-tight">Hello, {user.name}!</h2>
-          <p className="text-indigo-100 text-lg opacity-90 max-w-lg font-medium leading-snug min-h-[3rem]">
-            {loadingInsights ? (
-              <span className="flex items-center gap-2 italic">
-                <RefreshCw size={18} className="animate-spin" /> Synthesizing network BI metrics...
-              </span>
-            ) : insights}
+          <p className="text-indigo-100 text-lg opacity-90 max-w-lg font-medium leading-snug">
+            {loadingInsights ? 'Parsing system-wide BI metrics...' : insights}
           </p>
           <div className="flex gap-4 mt-8">
             <Button variant="secondary" className="!bg-white/10 !text-white !border-white/20 hover:!bg-white/20" onClick={() => setShowPayment(true)}>
@@ -115,11 +97,11 @@ export const Home = ({ user }: { user: UserProfile }) => {
           <div className="flex items-center justify-between p-5 bg-slate-50 rounded-2xl border border-slate-100">
             <div className="flex items-center gap-4">
               <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner ${
-                user.kycStatus === 'SUBMITTED' || user.kycStatus === 'PENDING' ? 'bg-amber-100 text-amber-600' :
+                user.kycStatus === 'SUBMITTED' ? 'bg-amber-100 text-amber-600' :
                 user.kycStatus === 'APPROVED' ? 'bg-emerald-100 text-emerald-600' :
                 'bg-red-100 text-red-600'
               }`}>
-                {user.kycStatus === 'SUBMITTED' || user.kycStatus === 'PENDING' ? <Clock size={28} /> : 
+                {user.kycStatus === 'SUBMITTED' ? <Clock size={28} /> : 
                  user.kycStatus === 'APPROVED' ? <CheckCircle size={28} /> : <AlertCircle size={28} />}
               </div>
               <div>

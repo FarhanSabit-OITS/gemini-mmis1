@@ -65,6 +65,7 @@ export const KYCModule = ({ type, userEmail, onComplete, initialData, readOnly =
       setForm(prev => ({
         ...prev,
         ...initialData,
+        // Ensure role and type don't get overwritten by defaults if present in initialData
         businessType: initialData.businessType || prev.businessType,
         requestedRole: initialData.requestedRole || prev.requestedRole
       }));
@@ -181,9 +182,9 @@ export const KYCModule = ({ type, userEmail, onComplete, initialData, readOnly =
         <div className="lg:col-span-8 space-y-8">
           <Card title="1. Entity Profile">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Input label="Legal Entity Name *" placeholder="e.g. Nile Logistics Hub" value={form.businessName} onChange={(e:any)=>setForm({...form, businessName: e.target.value})} disabled={readOnly} error={errors.businessName} />
+              <Input label="Legal Entity Name *" placeholder="e.g. Nile Logistics Hub" value={form.businessName} onChange={(e:any)=>setForm({...form, businessName: e.target.value})} disabled={readOnly} />
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-black text-slate-700 dark:text-slate-200 uppercase tracking-widest px-1">Industry Classification</label>
+                <label className="text-xs font-black text-slate-700 uppercase tracking-widest px-1">Industry Classification</label>
                 <select 
                   className="w-full bg-black text-white border-2 border-slate-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:border-indigo-600 outline-none appearance-none shadow-xl disabled:opacity-70"
                   value={form.businessType}
@@ -194,35 +195,36 @@ export const KYCModule = ({ type, userEmail, onComplete, initialData, readOnly =
                   <option value="Wholesale">Bulk Distribution</option>
                   <option value="Agro">Agro-Processing</option>
                   <option value="Import">International Trade</option>
+                  {/* Additional options for generic viewing */}
                   <option value="Electronics">Electronics</option>
                   <option value="Groceries">Groceries</option>
                   <option value="Clothing">Clothing</option>
                   <option value="General">General</option>
                 </select>
               </div>
-              <Input label="Registry ID / NIN / TIN *" placeholder="Input verified code" value={form.idNumber} onChange={(e:any)=>setForm({...form, idNumber: e.target.value})} disabled={readOnly} error={errors.idNumber} />
+              <Input label="Registry ID / NIN / TIN *" placeholder="Input verified code" value={form.idNumber} onChange={(e:any)=>setForm({...form, idNumber: e.target.value})} disabled={readOnly} />
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-black text-slate-700 dark:text-slate-200 uppercase tracking-widest px-1">Requested Privilege</label>
-                <div className="p-3.5 bg-slate-100 dark:bg-slate-800 rounded-xl font-bold text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">{form.requestedRole}</div>
+                <label className="text-xs font-black text-slate-700 uppercase tracking-widest px-1">Requested Privilege</label>
+                <div className="p-3.5 bg-slate-100 rounded-xl font-bold text-slate-600 border border-slate-200">{form.requestedRole}</div>
               </div>
             </div>
           </Card>
 
           <Card title="2. Personal Credentials">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Input label="Authorized First Name *" placeholder="John" value={form.firstName} onChange={(e:any)=>setForm({...form, firstName: e.target.value})} disabled={readOnly} error={errors.firstName} />
-              <Input label="Authorized Last Name *" placeholder="Doe" value={form.lastName} onChange={(e:any)=>setForm({...form, lastName: e.target.value})} disabled={readOnly} error={errors.lastName} />
+              <Input label="Authorized First Name *" placeholder="John" value={form.firstName} onChange={(e:any)=>setForm({...form, firstName: e.target.value})} disabled={readOnly} />
+              <Input label="Authorized Last Name *" placeholder="Doe" value={form.lastName} onChange={(e:any)=>setForm({...form, lastName: e.target.value})} disabled={readOnly} />
             </div>
           </Card>
 
           <Card title="3. Regional Allocation">
              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex flex-col gap-1.5">
-                   <label className="text-xs font-black text-slate-700 dark:text-slate-200 uppercase tracking-widest px-1">Operational City *</label>
+                   <label className="text-xs font-black text-slate-700 uppercase tracking-widest px-1">Operational City *</label>
                    <select 
                      value={form.city}
                      onChange={(e)=>setForm({...form, city: e.target.value, market: ''})}
-                     className={`w-full bg-black text-white border-2 ${errors.city ? 'border-red-500' : 'border-slate-800'} rounded-xl px-4 py-3.5 text-sm font-bold focus:border-indigo-600 outline-none shadow-xl appearance-none disabled:opacity-70`}
+                     className="w-full bg-black text-white border-2 border-slate-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:border-indigo-600 outline-none shadow-xl appearance-none disabled:opacity-70"
                      disabled={readOnly}
                    >
                      <option value="">Select Region</option>
@@ -230,12 +232,12 @@ export const KYCModule = ({ type, userEmail, onComplete, initialData, readOnly =
                    </select>
                 </div>
                 <div className="flex flex-col gap-1.5">
-                   <label className="text-xs font-black text-slate-700 dark:text-slate-200 uppercase tracking-widest px-1">Market Hub *</label>
+                   <label className="text-xs font-black text-slate-700 uppercase tracking-widest px-1">Market Hub *</label>
                    <select 
                      value={form.market}
                      onChange={(e)=>setForm({...form, market: e.target.value})}
                      disabled={!form.city || readOnly}
-                     className={`w-full bg-black text-white border-2 ${errors.market ? 'border-red-500' : 'border-slate-800'} rounded-xl px-4 py-3.5 text-sm font-bold focus:border-indigo-600 outline-none shadow-xl disabled:opacity-30 appearance-none`}
+                     className="w-full bg-black text-white border-2 border-slate-800 rounded-xl px-4 py-3.5 text-sm font-bold focus:border-indigo-600 outline-none shadow-xl disabled:opacity-30 appearance-none"
                    >
                      <option value="">{form.city ? 'Select Center' : 'Lock: Select City'}</option>
                      {marketsForCity.map(m => <option key={m} value={m}>{m}</option>)}
