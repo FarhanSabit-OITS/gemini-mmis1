@@ -46,11 +46,14 @@ export const DashboardLayout = ({ user, setUser, onLogout }: DashboardLayoutProp
   // Robust Dark Mode Logic
   const [isDarkMode, setIsDarkMode] = useState(() => {
     // 1. Check local storage
-    const saved = localStorage.getItem('mmis_theme');
-    if (saved === 'dark') return true;
-    if (saved === 'light') return false;
-    // 2. Fallback to system preference
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('mmis_theme');
+      if (saved === 'dark') return true;
+      if (saved === 'light') return false;
+      // 2. Fallback to system preference
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    return false;
   });
 
   // Apply class and listen for system changes
@@ -127,15 +130,8 @@ export const DashboardLayout = ({ user, setUser, onLogout }: DashboardLayoutProp
       case 'Map View': component = <InteractiveMap user={user} />; break;
       case 'Inventory Control': component = <InventoryManagement user={user} />; break;
       case 'Admin Roles': 
-        component = (
-          <div className="space-y-6 animate-fade-in">
-            <h2 className="text-3xl font-black uppercase tracking-tight dark:text-white">Administrative Permissions</h2>
-            <Card className="p-16 text-center rounded-[48px] border-2 border-dashed border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
-               <ShieldCheck className="mx-auto mb-6 text-indigo-600 opacity-20" size={80}/>
-               <p className="text-slate-500 dark:text-slate-400 font-bold uppercase text-xs tracking-[0.3em]">Credential Manager Synchronized</p>
-            </Card>
-          </div>
-        );
+        // Redirect Admin Roles directly to the Security Console for role management
+        component = <SecurityModule />;
         break;
       case 'Audit Logs': component = <AuditLogs />; break;
       case 'QR & Receipts': component = <QRManagement />; break;

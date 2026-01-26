@@ -20,8 +20,13 @@ interface SidebarProps {
 
 export const Sidebar = ({ user, activeTab, setActiveTab, isOpen, setIsOpen, onLogout }: SidebarProps) => {
   const canSee = (item: { name: string, roles?: Role[] }) => {
+    // Super Admin has unrestricted access to the entire schema
     if (user.role === 'SUPER_ADMIN') return true;
+    
+    // If no roles defined, it's a public/common module
     if (!item.roles) return true;
+    
+    // Strict role check
     return item.roles.includes(user.role);
   };
 
@@ -35,6 +40,7 @@ export const Sidebar = ({ user, activeTab, setActiveTab, isOpen, setIsOpen, onLo
     { name: 'Suppliers Network', icon: HeartHandshake, roles: ['SUPER_ADMIN', 'MARKET_ADMIN', 'VENDOR', 'SUPPLIER', 'USER'] as Role[] },
     { name: 'Supply Requisitions', icon: ShoppingBag, roles: ['SUPER_ADMIN', 'MARKET_ADMIN', 'VENDOR', 'SUPPLIER'] as Role[] },
     { name: 'Inventory Control', icon: Box, roles: ['SUPER_ADMIN', 'MARKET_ADMIN', 'VENDOR', 'SUPPLIER'] as Role[] },
+    // Restricted Admin Section
     { name: 'Admin Roles', icon: Lock, roles: ['SUPER_ADMIN', 'MARKET_ADMIN'] as Role[] },
     { name: 'Security Console', icon: Shield, roles: ['SUPER_ADMIN', 'MARKET_ADMIN'] as Role[] },
     { name: 'Revenue Module', icon: Landmark, roles: ['SUPER_ADMIN', 'MARKET_ADMIN'] as Role[] },

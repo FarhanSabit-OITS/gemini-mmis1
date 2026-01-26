@@ -1,7 +1,7 @@
 {
   "name": "mmis-multi-vendor-erp",
   "private": true,
-  "version": "6.0.0",
+  "version": "6.1.0",
   "type": "module",
   "description": "Enterprise-grade MMIS Platform with Modular BFF Architecture and AI-powered Logistics.",
   "author": "MMIS Engineering",

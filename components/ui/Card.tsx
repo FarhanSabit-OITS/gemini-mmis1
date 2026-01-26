@@ -1,17 +1,12 @@
-
 import React from 'react';
 
-// Fixed: Extended HTMLAttributes to support standard attributes like role, aria-labelledby, etc.
-interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  children?: React.ReactNode;
+// Fixed: Explicitly extend React.HTMLAttributes to ensure className, children and standard div attributes are available.
+export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   title?: string;
-  className?: string;
 }
 
-// Fixed: Destructured and applied rest props (like role, aria-*) and onClick to the container div
-export const Card = ({ children, title, className = '', onClick, ...rest }: CardProps) => (
+export const Card = ({ children, title, className = '', ...rest }: CardProps) => (
   <div 
-    onClick={onClick}
     className={`bg-white rounded-xl shadow-sm border border-slate-100 p-6 ${className}`}
     {...rest}
   >

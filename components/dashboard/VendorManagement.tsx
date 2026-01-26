@@ -70,7 +70,7 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
   const [categoryFilter, setCategoryFilter] = useState('ALL');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [showDuesOnly, setShowDuesOnly] = useState(false);
-  const [sortConfig, setSortConfig] = useState<{ key: 'name' | 'city' | 'status' | 'dues'; direction: 'asc' | 'desc' }>({ key: 'name', direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState<{ key: 'name' | 'city' | 'status' | 'dues' | 'kyc'; direction: 'asc' | 'desc' }>({ key: 'name', direction: 'asc' });
 
   const availableCategories = useMemo(() => {
     const cats = new Set(vendors.map(v => v.category));
@@ -101,6 +101,7 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
       if (sortConfig.key === 'name') { valA = a.name.toLowerCase(); valB = b.name.toLowerCase(); }
       else if (sortConfig.key === 'city') { valA = a.city.toLowerCase(); valB = b.city.toLowerCase(); }
       else if (sortConfig.key === 'status') { valA = a.status; valB = b.status; }
+      else if (sortConfig.key === 'kyc') { valA = a.kycStatus; valB = b.kycStatus; }
       else if (sortConfig.key === 'dues') { valA = a.rentDue + a.vatDue; valB = b.rentDue + b.vatDue; }
 
       if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
@@ -267,6 +268,7 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
                       </th>
                       <th scope="col" className="px-6 py-4 cursor-pointer" onClick={() => setSortConfig({key: 'name', direction: sortConfig.direction === 'asc' ? 'desc' : 'asc'})}>Entity <ArrowUpDown size={10} className="inline ml-1"/></th>
                       <th scope="col" className="px-6 py-4">Classification</th>
+                      <th scope="col" className="px-6 py-4 cursor-pointer" onClick={() => setSortConfig({key: 'kyc', direction: sortConfig.direction === 'asc' ? 'desc' : 'asc'})}>KYC Integrity <ArrowUpDown size={10} className="inline ml-1"/></th>
                       <th scope="col" className="px-6 py-4">Node Status</th>
                       <th scope="col" className="px-6 py-4 text-right" onClick={() => setSortConfig({key: 'dues', direction: sortConfig.direction === 'asc' ? 'desc' : 'asc'})}>Total Dues <ArrowUpDown size={10} className="inline ml-1"/></th>
                       <th scope="col" className="px-6 py-4 text-right">Ops</th>
@@ -295,10 +297,27 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
                         </td>
                         <td className="px-6 py-4"><span className="text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-lg">{vendor.category}</span></td>
                         <td className="px-6 py-4">
+                          {vendor.kycStatus === 'APPROVED' ? (
+                            <span className="text-emerald-600 bg-emerald-50 border-emerald-100 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] font-black uppercase border tracking-widest w-fit">
+                              <ShieldCheck size={12}/> Verified
+                            </span>
+                          ) : vendor.kycStatus === 'REJECTED' ? (
+                            <span className="text-red-600 bg-red-50 border-red-100 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] font-black uppercase border tracking-widest w-fit">
+                              <AlertCircle size={12}/> Rejected
+                            </span>
+                          ) : (vendor.kycStatus === 'PENDING' || vendor.kycStatus === 'SUBMITTED') ? (
+                            <span className="text-amber-600 bg-amber-50 border-amber-100 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] font-black uppercase border tracking-widest w-fit">
+                              <Clock size={12}/> Reviewing
+                            </span>
+                          ) : (
+                            <span className="text-slate-400 font-bold text-[10px] pl-2">-</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4">
                           <span className={`px-2.5 py-1 rounded-full text-[8px] font-black uppercase border flex items-center justify-center gap-1.5 w-fit ${
                             vendor.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
-                            vendor.status === 'PENDING_APPROVAL' ? 'bg-amber-50 text-amber-600 border-amber-200' :
-                            vendor.status === 'UNDER_REVIEW' ? 'bg-indigo-50 text-indigo-600 border-indigo-200' :
+                            vendor.status === 'PENDING_APPROVAL' ? 'bg-blue-50 text-blue-600 border-blue-200' :
+                            vendor.status === 'UNDER_REVIEW' ? 'bg-amber-50 text-amber-600 border-amber-200' :
                             'bg-red-50 text-red-600 border-red-200'
                           }`}>
                             {vendor.status.replace('_', ' ')}
