@@ -1,3 +1,4 @@
+
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
@@ -5,39 +6,45 @@ export default defineConfig({
   plugins: [react()],
   build: {
     target: 'esnext',
-    minify: 'terser',
+    minify: 'terser', // Use Terser for superior minification
     cssCodeSplit: true,
     sourcemap: false,
-    assetsInlineLimit: 4096,
-    chunkSizeWarningLimit: 1200,
+    assetsInlineLimit: 4096, // Inline small assets to reduce requests
+    chunkSizeWarningLimit: 1000,
     terserOptions: {
       compress: {
         drop_console: true,
         drop_debugger: true,
         pure_funcs: ['console.log', 'console.info', 'console.debug'],
-        passes: 3,
+        passes: 2, // Multiple optimization passes
       },
       format: {
-        comments: false,
+        comments: false, // Strip comments
       },
     },
     rollupOptions: {
       output: {
         manualChunks(id) {
+          // Vendor chunking
           if (id.includes('node_modules')) {
-            if (id.includes('react')) return 'vendor-react';
+            if (id.includes('react') || id.includes('react-dom')) return 'vendor-react';
             if (id.includes('recharts')) return 'vendor-charts';
             if (id.includes('lucide')) return 'vendor-icons';
             if (id.includes('@google/genai')) return 'vendor-ai';
             if (id.includes('zod')) return 'vendor-logic';
             return 'vendor-libs';
           }
-          if (id.includes('components/ui/')) return 'module-ui-core';
+          // Component chunking for optimal lazy loading
+          // Splits each dashboard view into its own file
           if (id.includes('components/dashboard/')) {
-            const parts = id.split('/');
-            const name = parts[parts.length - 1].split('.')[0].toLowerCase();
-            return `module-dash-${name}`;
+            const match = id.match(/components\/dashboard\/(.*?)\.tsx/);
+            if (match) {
+              const componentName = match[1].toLowerCase();
+              return `dash-${componentName}`;
+            }
           }
+          // Core UI chunk
+          if (id.includes('components/ui/')) return 'module-ui-core';
         },
       },
     },
