@@ -1,14 +1,13 @@
-import React from 'react';
+import React, { HTMLAttributes } from 'react';
 
-// Fixed: Explicitly extend React.HTMLAttributes to ensure className, children and standard div attributes are available.
-// Explicitly added children and className to resolve TS errors where inference fails.
-export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+// Explicitly extend HTMLAttributes to ensure className, children, role, onClick and standard div attributes are available.
+export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   title?: string;
   children?: React.ReactNode;
   className?: string;
 }
 
-export const Card = ({ children, title, className = '', ...rest }: CardProps) => (
+export const Card: React.FC<CardProps> = ({ children, title, className = '', ...rest }) => (
   <div 
     className={`bg-white rounded-xl shadow-sm border border-slate-100 p-6 ${className}`}
     {...rest}

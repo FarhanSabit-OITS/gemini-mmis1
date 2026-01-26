@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { 
   Search, Download, History, ArrowRight, ShieldCheck, 
@@ -10,7 +9,8 @@ import {
   ArrowUpDown, Filter, Ban, Banknote, XCircle, Package,
   Plus, Edit, Trash2, Image as ImageIcon, Upload, LayoutGrid,
   ChevronLeft, ChevronRight, Zap, Star, ListFilter, Tag,
-  ChevronDown, AlertCircle, UserCheck, FileCheck, Eye, SearchCode
+  ChevronDown, AlertCircle, UserCheck, FileCheck, Eye, SearchCode,
+  Power
 } from 'lucide-react';
 import { GoogleGenAI } from '@google/genai';
 import { z } from 'zod';
@@ -66,6 +66,9 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
   const [showKYCView, setShowKYCView] = useState(false);
   const [mapGrounding, setMapGrounding] = useState<{ text: string; links: any[] } | null>(null);
   const [loadingMap, setLoadingMap] = useState(false);
+
+  // Individual Row Action State
+  const [actionMenuOpen, setActionMenuOpen] = useState<string | null>(null);
 
   // Filters
   const [categoryFilter, setCategoryFilter] = useState('ALL');
@@ -138,6 +141,11 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
     setBulkAction(null);
   };
 
+  const changeVendorStatus = (id: string, status: Vendor['status']) => {
+    setVendors(prev => prev.map(v => v.id === id ? { ...v, status } : v));
+    setActionMenuOpen(null);
+  };
+
   const fetchLocationGrounding = async (vendor: Vendor) => {
     setLoadingMap(true);
     setMapGrounding(null);
@@ -181,6 +189,17 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
       requestedRole: 'VENDOR'
     };
   }, [viewingVendor]);
+
+  // Click outside to close action menu
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (!(e.target as Element).closest('.action-menu-trigger') && !(e.target as Element).closest('.action-menu-content')) {
+        setActionMenuOpen(null);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
 
   return (
     <div className="space-y-6 animate-fade-in relative pb-20">
@@ -315,8 +334,27 @@ export const VendorManagement = ({ user }: { user: UserProfile }) => {
                             )}
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-right">
-                          <button className="text-slate-400 hover:text-indigo-600 p-2" aria-label="More options"><MoreHorizontal size={18} /></button>
+                        <td className="px-6 py-4 text-right relative">
+                          <button 
+                            className="text-slate-400 hover:text-indigo-600 p-2 action-menu-trigger" 
+                            aria-label="More options"
+                            onClick={(e) => { e.stopPropagation(); setActionMenuOpen(actionMenuOpen === vendor.id ? null : vendor.id); }}
+                          >
+                            <MoreHorizontal size={18} />
+                          </button>
+                          {actionMenuOpen === vendor.id && (
+                            <div className="absolute right-8 top-8 w-40 bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-100 dark:border-slate-800 z-50 flex flex-col p-2 action-menu-content animate-slide-up">
+                               <button onClick={() => changeVendorStatus(vendor.id, 'ACTIVE')} className="flex items-center gap-2 p-2 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 text-emerald-600 rounded-lg text-[10px] font-black uppercase transition-colors text-left">
+                                  <CheckCircle2 size={14}/> Activate
+                               </button>
+                               <button onClick={() => changeVendorStatus(vendor.id, 'UNDER_REVIEW')} className="flex items-center gap-2 p-2 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 text-indigo-600 rounded-lg text-[10px] font-black uppercase transition-colors text-left">
+                                  <Eye size={14}/> Review
+                               </button>
+                               <button onClick={() => changeVendorStatus(vendor.id, 'INACTIVE')} className="flex items-center gap-2 p-2 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 rounded-lg text-[10px] font-black uppercase transition-colors text-left">
+                                  <Power size={14}/> Suspend
+                               </button>
+                            </div>
+                          )}
                         </td>
                       </tr>
                     ))}
